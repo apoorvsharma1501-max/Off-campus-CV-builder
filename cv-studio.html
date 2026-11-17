@@ -90,7 +90,7 @@ textarea{resize:vertical;line-height:1.45}
 .tb-actions{display:flex;gap:8px;flex-wrap:wrap}
 
 .canvas{overflow-x:auto;padding-bottom:8px}
-.paper{width:794px;min-height:1123px;margin:0 auto;background:var(--paper);color:var(--ink);padding:34px 36px 40px;box-shadow:0 1px 2px rgba(10,20,40,.12),0 8px 28px rgba(10,20,40,.12);font:13.4px/1.32 var(--serif);position:relative}
+.paper{width:794px;min-height:1123px;margin:0;transform-origin:top left;background:var(--paper);color:var(--ink);padding:34px 36px 40px;box-shadow:0 1px 2px rgba(10,20,40,.12),0 8px 28px rgba(10,20,40,.12);font:13.4px/1.32 var(--serif);position:relative}
 .example-note{font:13px/1.4 var(--body);background:var(--warn-soft);color:var(--fg);border:1px solid var(--warn);border-radius:8px;padding:8px 10px;margin:-14px 0 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .example-note .sp{flex:1}
 [contenteditable]{outline:none;border-radius:2px;cursor:text}
@@ -206,14 +206,109 @@ mark.kw{background:var(--mark);color:inherit;padding:0 1px;border-radius:2px}
 .sec-row .nm{flex:1;min-width:0;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sec-row .ct{font-size:12px;color:var(--muted)}
 .presets{display:flex;flex-wrap:wrap;gap:6px}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:9px;font-size:13px;z-index:20;max-width:min(92vw,520px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:9px;font-size:13px;z-index:20;max-width:min(92vw,520px);box-shadow:0 8px 24px rgba(0,0,0,.25);display:flex;gap:14px;align-items:center}
+.toast-act{background:none;border:0;color:var(--bg);font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
+
+/* signed-in user */
+.user{display:flex;gap:8px;align-items:center;font-size:12px;min-width:0}
+.user span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px;opacity:.9}
+.btn.on-top{background:var(--top-soft);border-color:transparent;color:var(--top-ink)}
+.btn.on-top:hover{border-color:var(--top-ink)}
+
+/* preview canvas: fit-to-width page + page-length guide */
+.canvas-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pages{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--good-soft);color:var(--good)}
+.pages.over{background:var(--warn-soft);color:var(--warn)}
+.paper-wrap{margin:0 auto}
+.page-break{position:absolute;left:0;right:0;height:0;border-top:2px dashed #d9650f;pointer-events:none;z-index:1}
+.page-break span{position:absolute;right:10px;top:-11px;background:#d9650f;color:#fff;font:600 11px/1.6 var(--body);padding:0 9px;border-radius:99px}
+
+/* bullet quality checks */
+.health{display:flex;gap:6px;flex-wrap:wrap}
+.hc{font-size:11.5px;padding:2px 8px;border-radius:99px;background:var(--panel-2);color:var(--muted);border:1px solid var(--line)}
+.hc.ok{background:var(--good-soft);color:var(--good);border-color:transparent}
+
+/* sign-in gate */
+html.locked .top,html.locked .app{display:none}
+.gate{min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);background:var(--bg)}
+.gate-brand{background:var(--top);color:var(--top-ink);display:flex;flex-direction:column;justify-content:center;gap:18px;position:relative;overflow:hidden;
+  padding-block:56px;padding-left:max(48px,env(safe-area-inset-left,0px));padding-right:48px}
+.gate-brand .logo{width:44px;height:44px;font-size:22px}
+.gate-brand h1{font:700 46px/1.04 var(--display);margin:0;letter-spacing:-.015em;max-width:12ch;text-wrap:balance;position:relative}
+.gate-brand p{font-size:17px;line-height:1.5;max-width:34ch;margin:0;opacity:.92;position:relative}
+.gate-points{list-style:none;padding:0;margin:6px 0 0;display:flex;flex-direction:column;gap:10px;position:relative}
+.gate-points li{display:flex;gap:12px;align-items:baseline;font-size:15px}
+.gate-points li::before{content:"";width:7px;height:7px;flex:none;background:var(--top-ink);transform:translateY(-2px)}
+.gate-foot{font-size:12px!important;letter-spacing:.1em;text-transform:uppercase;opacity:.72!important;margin-top:18px!important}
+@media (max-width:1180px){.gate-paper{display:none!important}}
+.gate-paper{position:absolute;right:-70px;bottom:-90px;width:240px;height:320px;background:#fff;transform:rotate(-8deg);box-shadow:0 20px 50px rgba(0,0,0,.3);padding:22px 18px;display:flex;flex-direction:column;gap:7px;opacity:.95}
+.gate-paper i{display:block;height:7px;background:#d8d8d8;border-radius:1px}
+.gate-paper i.b{height:12px;background:#5b5b5b;margin-top:6px}
+.gate-paper i.n{height:12px;width:60%;background:#222}
+.gate-paper i.s{width:70%}
+.gate-main{display:grid;place-items:center;padding-block:40px;padding-left:28px;padding-right:max(28px,env(safe-area-inset-right,0px))}
+.gate-card{width:100%;max-width:380px;display:flex;flex-direction:column;gap:12px}
+.gate-card h2{font:700 28px/1.15 var(--display);margin:0}
+.gate-card .note{font-size:14px}
+.gate-card input{font-size:16px;padding:11px 12px}
+#g-code{font:700 26px/1 var(--display);letter-spacing:.35em;text-align:center}
+.btn.big{padding:11px 16px;font-size:15px}
+.g-row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.g-err{color:var(--bad);font-size:13px;margin:0;min-height:1.2em}
+@media (max-width:760px){
+  .gate{grid-template-columns:minmax(0,1fr)}
+  .gate-brand{padding-block:32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));gap:12px}
+  .gate-brand h1{font-size:32px}
+  .gate-points,.gate-paper{display:none}
+  .gate-main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));place-items:start center}
+}
 </style>
+<script>if(!window.claude)document.documentElement.classList.add("locked")</script>
+
+<div class="gate" id="gate" hidden>
+  <div class="gate-brand">
+    <div class="logo" aria-hidden="true">C</div>
+    <h1>One CV for every job description</h1>
+    <p>Keep your placement CV in the familiar campus format, then tailor the framing to each JD before the ATS screen.</p>
+    <ul class="gate-points">
+      <li>Buckets and bullets you can reorder and rewrite</li>
+      <li>ATS keyword match against any JD</li>
+      <li>One-page check, PDF and Word export</li>
+    </ul>
+    <p class="gate-foot" id="g-foot">For BITSoM students</p>
+    <div class="gate-paper" aria-hidden="true"><i class="n"></i><i class="s"></i><i class="b"></i><i></i><i></i><i class="s"></i><i class="b"></i><i></i><i></i><i></i><i class="s"></i><i class="b"></i><i></i><i class="s"></i></div>
+  </div>
+  <div class="gate-main">
+    <form class="gate-card" id="gate-email" novalidate>
+      <h2>Sign in</h2>
+      <p class="note" id="g-intro">We'll email a 6-digit code to your BITSoM address. No password needed.</p>
+      <label class="fl" for="g-email">College email</label>
+      <input id="g-email" type="email" autocomplete="email" placeholder="you@bitsom.edu.in">
+      <button class="btn primary big" id="g-send" type="submit">Email me a code</button>
+      <p class="g-err" id="g-err1" role="alert"></p>
+    </form>
+    <form class="gate-card" id="gate-code" hidden novalidate>
+      <h2>Check your inbox</h2>
+      <p class="note">Enter the code we sent to <b id="g-to"></b>. Look in Spam or Promotions if it isn't there in a minute.</p>
+      <label class="fl" for="g-code">Sign-in code</label>
+      <input id="g-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="••••••">
+      <button class="btn primary big" id="g-verify" type="submit">Sign in</button>
+      <div class="g-row"><button type="button" class="btn ghost small" id="g-back">Use a different email</button><button type="button" class="btn ghost small" id="g-resend">Resend code</button></div>
+      <p class="g-err" id="g-err2" role="alert"></p>
+    </form>
+    <div class="gate-card" id="gate-off" hidden>
+      <h2>Sign-in isn't set up yet</h2>
+      <p class="note">The site owner needs to add the Supabase settings to the Vercel project and redeploy.</p>
+    </div>
+  </div>
+</div>
 
 <header class="top">
   <div class="logo" aria-hidden="true">C</div>
   <div class="brand">CV Studio<small>Off-campus placements</small></div>
   <span class="sp"></span>
   <span class="status" id="status">Loading…</span>
+  <div class="user" id="user-box" hidden><span id="who"></span><button class="btn small on-top" id="btn-signout">Sign out</button></div>
 </header>
 
 <div class="app">
@@ -246,7 +341,8 @@ mark.kw{background:var(--mark);color:inherit;padding:0 1px;border-radius:2px}
         <button class="btn danger" id="btn-del-cv" data-confirm>Delete CV</button>
       </div>
     </div>
-    <div class="canvas"><div class="paper" id="paper"></div></div>
+    <div class="canvas-bar"><span class="pages" id="pages">Fits on one A4 page</span><span class="note">Click any text on the page to edit it · hover for move and delete</span></div>
+    <div class="canvas"><div class="paper-wrap" id="paper-wrap"><div class="paper" id="paper"></div></div></div>
   </main>
 
   <aside class="rail" aria-label="Tailoring tools">
@@ -269,6 +365,7 @@ mark.kw{background:var(--mark);color:inherit;padding:0 1px;border-radius:2px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>/*__CV_CONFIG__*/</script>
 <script>
 "use strict";
 /* ---------- helpers ---------- */
@@ -283,7 +380,13 @@ const lsGet = k => { try { return localStorage.getItem(k); } catch { return null
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
 function ago(t){ const s = (Date.now() - t) / 1000; if (s < 60) return "just now"; if (s < 3600) return Math.floor(s/60) + " min ago"; if (s < 86400) return Math.floor(s/3600) + " h ago"; return Math.floor(s/86400) + " d ago"; }
 let toastT;
-function toast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 3800); }
+function toast(msg, action){
+  const t = $("#toast"); t.textContent = "";
+  const s = document.createElement("span"); s.textContent = msg; t.append(s);
+  if (action) { const b = document.createElement("button"); b.className = "toast-act"; b.textContent = action.label; b.onclick = () => { t.hidden = true; action.fn(); }; t.append(b); }
+  t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, action ? 6500 : 3800);
+}
+const UNDO = { label: "Undo", fn: () => undo() };
 function withTimeout(p, ms){ return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej({code:"timeout"}), ms))]); }
 
 /* ---------- data ---------- */
@@ -341,10 +444,12 @@ function newSection(title){
 const PRESETS = ["Academic Achievements","Work Experience","Summer Internship","Live Projects","Competitions & Certifications","Positions of Responsibility","Extra-curricular Activities","AI Product Development","Skills","Education"];
 
 /* ---------- storage ---------- */
+let sb = null, me = null; // Supabase client and signed-in user (standalone website only)
 const LS_KEY = "cvstudio.cvs";
 const Store = {
   mode: "pending", col: null, ready: null,
   async init(){
+    if (sb && me) return this.mode = "cloud";
     const c = window.claude;
     try {
       if (!c?.use) return this.mode = "local";
@@ -362,20 +467,25 @@ const Store = {
   async list(){
     await this.ready;
     if (this.mode === "db") { const snap = await withTimeout(this.col.get(), 10000); return snap.docs.filter(d => d.exists).map(d => clone(d.data())); }
+    if (this.mode === "cloud") { const { data, error } = await withTimeout(sb.from("cvs").select("data"), 15000); if (error) throw error; return data.map(r => r.data); }
     return Object.values(this.readLocal());
   },
   async put(cv){
     await this.ready;
     if (this.mode === "db") return this.col.doc(cv.id).set(cv);
+    if (this.mode === "cloud") {
+      const { error } = await sb.from("cvs").upsert({ user_id: me.id, id: cv.id, data: cv, updated_at: new Date(cv.updatedAt).toISOString() }, { onConflict: "user_id,id" });
+      if (error) throw error; return;
+    }
     const all = this.readLocal(); all[cv.id] = cv; lsSet(LS_KEY, JSON.stringify(all));
   },
   async remove(id){
     await this.ready;
     if (this.mode === "db") return this.col.doc(id).delete();
+    if (this.mode === "cloud") { const { error } = await sb.from("cvs").delete().eq("user_id", me.id).eq("id", id); if (error) throw error; return; }
     const all = this.readLocal(); delete all[id]; lsSet(LS_KEY, JSON.stringify(all));
   }
 };
-Store.ready = Store.init();
 
 /* ---------- state ---------- */
 const S = { cvs: {}, cur: null, edit: null, editDraft: null, newPt: null, ai: null, review: null, tab: "jd", hl: lsGet("cvstudio.hl") !== "0", sample: null, aiOff: false, downloads: null, ctl: null, kwBusy: false };
@@ -386,7 +496,7 @@ let pendingSaves = 0;
 function setStatus(){
   const el = $("#status");
   if (pendingSaves > 0) { el.textContent = "Saving…"; return; }
-  el.textContent = Store.mode === "db" ? "Saved privately to your account" : Store.mode === "local" ? "Saved in this browser only" : "Connecting…";
+  el.textContent = Store.mode === "db" ? "Saved privately to your account" : Store.mode === "cloud" ? "Saved to your account" : Store.mode === "local" ? "Saved in this browser only" : "Connecting…";
 }
 function scheduleSave(cv){
   cv.updatedAt = Date.now();
@@ -402,6 +512,7 @@ function flush(id){
 async function onSaveError(e){
   const code = e?.code;
   if (code === "quota_exceeded") { toast("Your storage is full. Delete an old CV, then try again."); return; }
+  if (Store.mode === "cloud") { toast("Couldn't save to your account. Check your connection; your next edit will try again."); return; }
   if (Store.mode === "db" && code !== "unavailable") {
     Store.mode = "local";
     Object.values(S.cvs).forEach(cv => Store.put(clone(cv)));
@@ -639,6 +750,7 @@ function renderPaper(){
   cv.sections.forEach((s, i) => { h += sectionHtml(s, i, cv.sections.length); });
   h += `<button class="add-sec" data-act="open-add">+ Add a new section</button>`;
   $("#paper").innerHTML = h;
+  layoutPaper();
   if (S.edit) { const ta = $("#ed-text"); const ae = document.activeElement; if (ta && !S.ai?.busy && (!ae || ae === document.body || $("#paper").contains(ae))) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } updateCount(); }
 }
 function sectionHtml(s, i, n){
@@ -681,6 +793,7 @@ function editorHtml(p, pi, n){
   return `<div class="pt-edit" data-pt="${p.id}">
     <div><label class="fl" for="ed-text">Bullet <span class="hint">· wrap words in **double asterisks** to bold them · <span class="count" id="ed-count"></span></span></label>
     <textarea id="ed-text" rows="3">${esc(d.text)}</textarea></div>
+    <div class="health" id="ed-health" aria-live="polite"></div>
     <div class="ed-row">
       <div><label class="fl" for="ed-label">Bucket title <span class="hint">(optional)</span></label><input id="ed-label" list="bucket-list" value="${esc(d.label || "")}" placeholder="e.g. Significant Achievements"></div>
       <div><label class="fl" for="ed-year">Year / right text</label><input id="ed-year" value="${esc(d.year || "")}" placeholder="e.g. 2025"></div>
@@ -699,7 +812,41 @@ function updateCount(){
   const ta = $("#ed-text"), c = $("#ed-count"); if (!ta || !c) return;
   const n = stripMd(ta.value).length; c.textContent = n + " characters" + (n > 125 ? " · may run past one line" : "");
   c.classList.toggle("long", n > 125);
+  const hEl = $("#ed-health"); if (!hEl) return;
+  const t = stripMd(ta.value).trim(); const first = (t.split(/\s+/)[0] || "").replace(/[^A-Za-z-]/g, "");
+  const checks = [
+    [!!first && /^[A-Z]/.test(first) && !WEAK.has(first.toLowerCase()), "Starts with a strong verb"],
+    [/\d/.test(t), "Has a number"],
+    [/\*\*.+?\*\*/.test(ta.value), "Key result in bold"],
+    [n > 0 && n <= 125, "Fits on one line"]
+  ];
+  hEl.innerHTML = checks.map(([ok, l]) => `<span class="hc ${ok ? "ok" : ""}">${ok ? "✓" : "○"} ${l}</span>`).join("");
 }
+const WEAK = new Set("responsible worked helped involved assisted handled participated was were did various duties tasked part managed-to".split(" "));
+
+/* fit the A4 page to the available width and mark where page 2 starts */
+let layoutQueued = false;
+function layoutPaper(){
+  if (layoutQueued) return; layoutQueued = true;
+  requestAnimationFrame(() => {
+    layoutQueued = false;
+    const paper = $("#paper"), wrap = $("#paper-wrap"), canvas = $(".canvas"); if (!paper || !canvas.clientWidth) return;
+    const s = Math.max(0.6, Math.min(1, canvas.clientWidth / 794));
+    paper.style.transform = s < 1 ? `scale(${s})` : "";
+    wrap.style.width = 794 * s + "px";
+    paper.querySelectorAll(".page-break").forEach(e => e.remove());
+    const secs = paper.querySelectorAll(".sec"); const last = secs[secs.length - 1];
+    const head = paper.querySelector(".cv-head"); const top0 = head ? head.offsetTop - 34 : 0;
+    const used = last ? last.offsetTop + last.offsetHeight + 40 - top0 : 0;
+    const pages = used / 1123;
+    for (let k = 1; k < Math.ceil(pages); k++) { const d = document.createElement("div"); d.className = "page-break"; d.style.top = (1123 * k + top0) + "px"; d.innerHTML = `<span>Page ${k + 1} starts here</span>`; paper.append(d); }
+    wrap.style.height = paper.offsetHeight * s + "px";
+    const chip = $("#pages"); const over = pages > 1.0;
+    chip.className = "pages" + (over ? " over" : "");
+    chip.textContent = over ? `Runs onto page ${Math.ceil(pages)} (${Math.round((pages - Math.floor(pages)) * 100) || 100}% of it) · trim to fit` : `Fits on one A4 page · ${Math.round(pages * 100)}% used`;
+  });
+}
+if (window.ResizeObserver) { const ro = new ResizeObserver(() => layoutPaper()); ro.observe($(".canvas")); ro.observe($("#paper")); }
 function renderRail(){
   document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === S.tab));
   $("#tab-jd").hidden = S.tab !== "jd"; $("#tab-sec").hidden = S.tab !== "sec";
@@ -765,9 +912,9 @@ const A = {
   "open-add": () => { S.tab = "sec"; renderRail(); $(".rail").scrollIntoView({ behavior: "smooth", block: "start" }); },
   "sec-up": ({ sec }) => mutate(cv => move(cv.sections, cv.sections.findIndex(s => s.id === sec), -1)),
   "sec-down": ({ sec }) => mutate(cv => move(cv.sections, cv.sections.findIndex(s => s.id === sec), 1)),
-  "del-sec": ({ sec }) => { mutate(cv => cv.sections = cv.sections.filter(s => s.id !== sec)); toast("Section deleted. Undo brings it back."); },
+  "del-sec": ({ sec }) => { mutate(cv => cv.sections = cv.sections.filter(s => s.id !== sec)); toast("Section deleted", UNDO); },
   "add-row": ({ sec }) => mutate(cv => { const s = cv.sections.find(x => x.id === sec); s.rows.push({ id: uid(), cells: s.columns.map(() => "") }); }),
-  "del-row": ({ sec, row }) => mutate(cv => { const s = cv.sections.find(x => x.id === sec); s.rows = s.rows.filter(r => r.id !== row); }),
+  "del-row": ({ sec, row }) => { mutate(cv => { const s = cv.sections.find(x => x.id === sec); s.rows = s.rows.filter(r => r.id !== row); }); toast("Row deleted", UNDO); },
   "row-up": ({ sec, row }) => mutate(cv => { const s = cv.sections.find(x => x.id === sec); move(s.rows, s.rows.findIndex(r => r.id === row), -1); }),
   "row-down": ({ sec, row }) => mutate(cv => { const s = cv.sections.find(x => x.id === sec); move(s.rows, s.rows.findIndex(r => r.id === row), 1); }),
   "add-col": ({ sec }) => mutate(cv => { const s = cv.sections.find(x => x.id === sec); s.columns.push("Column"); s.rows.forEach(r => r.cells.push("")); }),
@@ -775,13 +922,13 @@ const A = {
   "add-group": ({ sec }) => mutate(cv => { cv.sections.find(x => x.id === sec).groups.push(G(true, [], "Organisation", "Role", "Dates")); }),
   "grp-up": ({ sec, grp }) => mutate(cv => { const s = cv.sections.find(x => x.id === sec); move(s.groups, s.groups.findIndex(g => g.id === grp), -1); }),
   "grp-down": ({ sec, grp }) => mutate(cv => { const s = cv.sections.find(x => x.id === sec); move(s.groups, s.groups.findIndex(g => g.id === grp), 1); }),
-  "del-grp": ({ sec, grp }) => mutate(cv => { const s = cv.sections.find(x => x.id === sec); s.groups = s.groups.filter(g => g.id !== grp); }),
+  "del-grp": ({ sec, grp }) => { mutate(cv => { const s = cv.sections.find(x => x.id === sec); s.groups = s.groups.filter(g => g.id !== grp); }); toast("Entry deleted", UNDO); },
   "toggle-head": ({ sec, grp }) => mutate(cv => { const g = cv.sections.find(x => x.id === sec).groups.find(x => x.id === grp); g.showHead = !g.showHead; }),
   "add-pt": ({ sec, grp }) => addPoint(sec, grp),
   "add-pt-first": ({ sec }) => addPoint(sec, null),
   "pt-up": ({ pt }) => mutate(cv => { const f = findPt(cv, pt); move(f.g.points, f.i, -1); }),
   "pt-down": ({ pt }) => mutate(cv => { const f = findPt(cv, pt); move(f.g.points, f.i, 1); }),
-  "del-pt": ({ pt }) => mutate(cv => { const f = findPt(cv, pt); f.g.points.splice(f.i, 1); }),
+  "del-pt": ({ pt }) => { mutate(cv => { const f = findPt(cv, pt); f.g.points.splice(f.i, 1); }); toast("Bullet deleted", UNDO); },
   "edit-pt": ({ pt }) => { closeEditor(); S.edit = pt; renderPaper(); },
   "reframe": ({ pt }) => { closeEditor(); S.edit = pt; renderPaper(); aiReframe(pt); },
   "ed-save": ({ pt }) => {
@@ -795,7 +942,7 @@ const A = {
   },
   "ed-up": ({ pt }) => { S.editDraft = readEditor(); mutate(cv => { const f = findPt(cv, pt); move(f.g.points, f.i, -1); }); },
   "ed-down": ({ pt }) => { S.editDraft = readEditor(); mutate(cv => { const f = findPt(cv, pt); move(f.g.points, f.i, 1); }); },
-  "ed-del": ({ pt }) => { closeEditor(); mutate(cv => { const f = findPt(cv, pt); f.g.points.splice(f.i, 1); }); },
+  "ed-del": ({ pt }) => { closeEditor(); mutate(cv => { const f = findPt(cv, pt); f.g.points.splice(f.i, 1); }); toast("Bullet deleted", UNDO); },
   "ed-reframe": ({ pt }) => aiReframe(pt),
   "ed-use": ({ el }) => { const o = S.ai?.options[+el.dataset.i]; if (!o) return; const ta = $("#ed-text"); ta.value = o.text; ta.focus(); updateCount(); toast("Copied into the editor. Save to keep it."); },
   "tailor": () => aiTailorAll(),
@@ -803,7 +950,7 @@ const A = {
   "rv-ok": ({ el }) => { const x = S.review.list[+el.dataset.i]; if (!findPt(cur(), x.id)) { x.state = "skip"; renderReview(); return; } x.state = "ok"; mutate(cv => { findPt(cv, x.id).p.text = x.text; }); },
   "rv-skip": ({ el }) => { S.review.list[+el.dataset.i].state = "skip"; renderReview(); },
   "rv-edit": ({ el }) => { const x = S.review.list[+el.dataset.i]; const f = findPt(cur(), x.id); if (!f) return; x.state = "ok"; closeEditor(); S.edit = x.id; S.editDraft = { text: x.text, label: f.p.label, year: f.p.year }; renderAll(); document.querySelector(".pt-edit")?.scrollIntoView({ behavior: "smooth", block: "center" }); },
-  "rv-all": () => { const todo = S.review.list.filter(x => !x.state && findPt(cur(), x.id)); mutate(cv => todo.forEach(x => { findPt(cv, x.id).p.text = x.text; x.state = "ok"; })); S.review.list.forEach(x => x.state ||= "skip"); renderReview(); toast(`Accepted ${todo.length} rewrites. Undo reverts them all.`); },
+  "rv-all": () => { const todo = S.review.list.filter(x => !x.state && findPt(cur(), x.id)); mutate(cv => todo.forEach(x => { findPt(cv, x.id).p.text = x.text; x.state = "ok"; })); S.review.list.forEach(x => x.state ||= "skip"); renderReview(); toast(`Accepted ${todo.length} rewrites`, UNDO); },
   "rv-clear": () => { S.review = null; renderReview(); },
   "kw-add": () => { const inp = $("#kw-new"); const t = inp.value.trim().toLowerCase(); if (!t) return; mutate(cv => { cv.keywords = (cv.keywords || []).concat({ term: t, weight: 2, category: "", off: false }); }, { history: false }); buildHighlight(); renderPaper(); renderMatch(); },
   "kw-local": () => { mutate(cv => { cv.keywords = localKeywords(cv.jd); cv.kwSource = "local"; cv.kwStale = false; }, { history: false }); buildHighlight(); renderPaper(); },
@@ -1089,10 +1236,21 @@ async function boot(){
     c.use("downloads").then(d => { S.downloads = d; }).catch(() => {});
   } else S.aiOff = true;
   renderAll(); setStatus();
+  Store.ready = Store.init();
   await Store.ready;
   let list = [];
   try { list = await Store.list(); }
-  catch { if (Store.mode === "db") { Store.mode = "local"; toast("Couldn't reach your saved CVs, so this visit saves in this browser."); list = await Store.list().catch(() => []); } }
+  catch {
+    if (Store.mode === "db") { Store.mode = "local"; toast("Couldn't reach your saved CVs, so this visit saves in this browser."); list = await Store.list().catch(() => []); }
+    else if (Store.mode === "cloud") toast("Couldn't load your saved CVs. Check your connection and reload.");
+  }
+  if (Store.mode === "cloud" && !list.length) {
+    const local = Object.values(Store.readLocal()).filter(c => c?.id && Array.isArray(c.sections));
+    if (local.length) {
+      for (const cv of local) await Store.put(cv).catch(() => {});
+      list = local; toast(`Moved ${local.length} CV${local.length > 1 ? "s" : ""} from this browser into your account.`);
+    }
+  }
   const exEdited = S.cvs[ex.id] && !S.cvs[ex.id].example;
   if (list.length) {
     if (!exEdited) delete S.cvs[ex.id];
@@ -1103,5 +1261,82 @@ async function boot(){
   } else if (exEdited) flush(ex.id);
   setStatus(); renderAll();
 }
-boot();
+
+/* ---------- sign-in (standalone website only; inside Claude, Claude handles access) ---------- */
+const CFG = window.CV_CONFIG || null;
+const DOMAIN = String(CFG?.allowedDomain || "bitsom.edu.in").toLowerCase();
+const allowedEmail = e => String(e || "").trim().toLowerCase().endsWith("@" + DOMAIN);
+let pendingEmail = "", resendAt = 0, resendT = null;
+function showGate(step){
+  $("#gate").hidden = false;
+  ["email","code","off"].forEach(s => $("#gate-" + s).hidden = s !== step);
+  if (step === "email") setTimeout(() => $("#g-email").focus(), 0);
+  if (step === "code") setTimeout(() => $("#g-code").focus(), 0);
+}
+function authMsg(error){
+  const m = String(error?.message || "");
+  if (/database error|only @|saving new user/i.test(m)) return `Only @${DOMAIN} email addresses can sign in.`;
+  if (error?.status === 429 || /rate limit|security purposes|seconds/i.test(m)) return "Too many codes requested. Wait a minute, then try again.";
+  if (/expired|invalid|otp/i.test(m)) return "That code is wrong or has expired. Use the newest email, or resend a code.";
+  if (/fetch|network/i.test(m)) return "Couldn't reach the sign-in server. Check your connection.";
+  return "Sign-in failed: " + m;
+}
+function tickResend(){
+  const b = $("#g-resend"); clearInterval(resendT);
+  const f = () => { const left = Math.ceil((resendAt - Date.now()) / 1000); b.disabled = left > 0; b.textContent = left > 0 ? `Resend code in ${left}s` : "Resend code"; if (left <= 0) clearInterval(resendT); };
+  f(); resendT = setInterval(f, 1000);
+}
+async function sendCode(email, errEl){
+  const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+  if (error) { errEl.textContent = authMsg(error); return false; }
+  pendingEmail = email; resendAt = Date.now() + 60000; tickResend(); return true;
+}
+function enter(user){
+  me = user;
+  document.documentElement.classList.remove("locked"); $("#gate").hidden = true;
+  $("#who").textContent = user.email; $("#user-box").hidden = false;
+  sb.auth.onAuthStateChange(ev => { if (ev === "SIGNED_OUT") location.reload(); });
+  boot();
+}
+async function startStandalone(){
+  $("#g-intro").textContent = `We'll email a sign-in code to your @${DOMAIN} address. No password needed.`;
+  $("#g-email").placeholder = "you@" + DOMAIN;
+  if (CFG?.noLogin) { document.documentElement.classList.remove("locked"); return boot(); }
+  if (!CFG?.supabaseUrl || !CFG?.supabaseAnonKey || !window.supabase?.createClient) return showGate("off");
+  sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
+  let session = null;
+  try { session = (await sb.auth.getSession()).data.session; } catch {}
+  if (session && allowedEmail(session.user.email)) return enter(session.user);
+  if (session) await sb.auth.signOut().catch(() => {});
+  showGate("email");
+}
+$("#gate-email").addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = $("#g-email").value.trim().toLowerCase(), err = $("#g-err1"), b = $("#g-send");
+  err.textContent = "";
+  if (!/^[^\s@]+@[^\s@]+$/.test(email)) { err.textContent = "Enter your full email address."; return; }
+  if (!allowedEmail(email)) { err.textContent = `Use your @${DOMAIN} email. Other addresses can't sign in.`; return; }
+  b.disabled = true; b.textContent = "Sending…";
+  const ok = await sendCode(email, err);
+  b.disabled = false; b.textContent = "Email me a code";
+  if (ok) { $("#g-to").textContent = email; $("#g-code").value = ""; $("#g-err2").textContent = ""; showGate("code"); }
+});
+$("#gate-code").addEventListener("submit", async e => {
+  e.preventDefault();
+  const token = $("#g-code").value.replace(/\D/g, ""), err = $("#g-err2"), b = $("#g-verify");
+  err.textContent = "";
+  if (token.length < 6) { err.textContent = "Enter the full code from the email."; return; }
+  b.disabled = true; b.textContent = "Checking…";
+  const { data, error } = await sb.auth.verifyOtp({ email: pendingEmail, token, type: "email" });
+  b.disabled = false; b.textContent = "Sign in";
+  if (error) { err.textContent = authMsg(error); return; }
+  if (!allowedEmail(data?.user?.email)) { await sb.auth.signOut(); err.textContent = `Only @${DOMAIN} email addresses can sign in.`; return; }
+  enter(data.user);
+});
+$("#g-code").addEventListener("input", e => { const v = e.target.value.replace(/\D/g, ""); e.target.value = v; if (v.length === (Number(CFG?.otpLength) || 6)) $("#gate-code").requestSubmit(); });
+$("#g-back").onclick = () => { $("#g-err1").textContent = ""; showGate("email"); };
+$("#g-resend").onclick = async () => { $("#g-err2").textContent = ""; if (await sendCode(pendingEmail, $("#g-err2"))) toast("New code sent to " + pendingEmail); };
+$("#btn-signout").onclick = async () => { await sb?.auth.signOut().catch(() => {}); location.reload(); };
+
+if (window.claude) boot(); else startStandalone();
 </script>
