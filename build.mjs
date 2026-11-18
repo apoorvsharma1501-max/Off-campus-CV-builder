@@ -16,8 +16,14 @@ const src = readFileSync(new URL("./cv-studio.html", import.meta.url), "utf8");
 const cut = src.indexOf("<header");
 if (cut < 0) throw new Error("Couldn't find <header> in cv-studio.html");
 
+// Accept the URL in any form people paste it (with /rest/v1/, a trailing slash, etc.)
+function projectOrigin(u){
+  u = (u || "").trim(); if (!u) return "";
+  try { return new URL(/^https?:\/\//.test(u) ? u : "https://" + u).origin; }
+  catch { throw new Error("SUPABASE_URL isn't a valid URL: " + u); }
+}
 const config = {
-  supabaseUrl: (env.SUPABASE_URL || "").trim(),
+  supabaseUrl: projectOrigin(env.SUPABASE_URL),
   supabaseAnonKey: (env.SUPABASE_ANON_KEY || "").trim(),
   allowedDomain: (env.ALLOWED_EMAIL_DOMAIN || "bitsom.edu.in").trim().toLowerCase(),
   otpLength: Number(env.OTP_LENGTH) || 6,

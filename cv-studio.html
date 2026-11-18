@@ -1273,13 +1273,17 @@ function showGate(step){
   if (step === "email") setTimeout(() => $("#g-email").focus(), 0);
   if (step === "code") setTimeout(() => $("#g-code").focus(), 0);
 }
-function authMsg(error){
-  const m = String(error?.message || "");
+function authMsg(error, stage){
+  const m = String(error?.message || ""), code = String(error?.code || "");
+  console.warn("Sign-in error", stage, error);
   if (/database error|only @|saving new user/i.test(m)) return `Only @${DOMAIN} email addresses can sign in.`;
-  if (error?.status === 429 || /rate limit|security purposes|seconds/i.test(m)) return "Too many codes requested. Wait a minute, then try again.";
-  if (/expired|invalid|otp/i.test(m)) return "That code is wrong or has expired. Use the newest email, or resend a code.";
+  if (error?.status === 429 || /rate limit|security purposes/i.test(m)) return "Too many codes requested. Wait a minute, then try again.";
+  if (/invalid path|PGRST125/i.test(m + code) || error?.status === 404) return "Sign-in is misconfigured: the Supabase URL is wrong. The site owner should check SUPABASE_URL in Vercel.";
+  if (/api key|apikey|no api key/i.test(m)) return "Sign-in is misconfigured: the Supabase key is wrong. The site owner should check SUPABASE_ANON_KEY in Vercel.";
+  if (/sending|smtp|email provider/i.test(m)) return "The code email couldn't be sent. The site owner should check the SMTP settings in Supabase. (" + m + ")";
   if (/fetch|network/i.test(m)) return "Couldn't reach the sign-in server. Check your connection.";
-  return "Sign-in failed: " + m;
+  if (stage === "verify" && /expired|invalid|otp|token/i.test(m)) return "That code is wrong or has expired. Use the newest email, or resend a code.";
+  return (stage === "verify" ? "Sign-in failed: " : "Couldn't send the code: ") + m;
 }
 function tickResend(){
   const b = $("#g-resend"); clearInterval(resendT);
@@ -1288,7 +1292,7 @@ function tickResend(){
 }
 async function sendCode(email, errEl){
   const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
-  if (error) { errEl.textContent = authMsg(error); return false; }
+  if (error) { errEl.textContent = authMsg(error, "send"); return false; }
   pendingEmail = email; resendAt = Date.now() + 60000; tickResend(); return true;
 }
 function enter(user){
@@ -1329,7 +1333,7 @@ $("#gate-code").addEventListener("submit", async e => {
   b.disabled = true; b.textContent = "Checking…";
   const { data, error } = await sb.auth.verifyOtp({ email: pendingEmail, token, type: "email" });
   b.disabled = false; b.textContent = "Sign in";
-  if (error) { err.textContent = authMsg(error); return; }
+  if (error) { err.textContent = authMsg(error, "verify"); return; }
   if (!allowedEmail(data?.user?.email)) { await sb.auth.signOut(); err.textContent = `Only @${DOMAIN} email addresses can sign in.`; return; }
   enter(data.user);
 });
