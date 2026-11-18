@@ -85,7 +85,7 @@ button,input,textarea{font:inherit;color:inherit}
 .field{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 150px}
 .fl{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .hint{text-transform:none;letter-spacing:0;font-weight:400}
-input[type=text],input:not([type]),textarea{width:100%;border:1px solid var(--line);background:var(--panel-2);border-radius:8px;padding:7px 9px}
+input[type=text],input[type=email],input[type=password],input:not([type]),textarea{width:100%;border:1px solid var(--line);background:var(--panel-2);border-radius:8px;padding:7px 9px}
 textarea{resize:vertical;line-height:1.45}
 .tb-actions{display:flex;gap:8px;flex-wrap:wrap}
 
@@ -251,7 +251,10 @@ html.locked .top,html.locked .app{display:none}
 .gate-card h2{font:700 28px/1.15 var(--display);margin:0}
 .gate-card .note{font-size:14px}
 .gate-card input{font-size:16px;padding:11px 12px}
-#g-code{font:700 26px/1 var(--display);letter-spacing:.35em;text-align:center}
+.gate-tabs{margin-bottom:4px}
+.pw{position:relative}
+.pw input{padding-right:70px}
+.pw-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--accent);font-weight:600;font-size:13px;cursor:pointer;padding:6px 8px}
 .btn.big{padding:11px 16px;font-size:15px}
 .g-row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .g-err{color:var(--bad);font-size:13px;margin:0;min-height:1.2em}
@@ -279,22 +282,21 @@ html.locked .top,html.locked .app{display:none}
     <div class="gate-paper" aria-hidden="true"><i class="n"></i><i class="s"></i><i class="b"></i><i></i><i></i><i class="s"></i><i class="b"></i><i></i><i></i><i></i><i class="s"></i><i class="b"></i><i></i><i class="s"></i></div>
   </div>
   <div class="gate-main">
-    <form class="gate-card" id="gate-email" novalidate>
-      <h2>Sign in</h2>
-      <p class="note" id="g-intro">We'll email a 6-digit code to your BITSoM address. No password needed.</p>
+    <form class="gate-card" id="gate-auth" novalidate>
+      <div class="tabs gate-tabs" role="tablist">
+        <button type="button" role="tab" data-mode="signin" class="on">Sign in</button>
+        <button type="button" role="tab" data-mode="signup">Create account</button>
+      </div>
+      <h2 id="g-title">Welcome back</h2>
+      <p class="note" id="g-intro">Sign in with your BITSoM email and password.</p>
       <label class="fl" for="g-email">College email</label>
       <input id="g-email" type="email" autocomplete="email" placeholder="you@bitsom.edu.in">
-      <button class="btn primary big" id="g-send" type="submit">Email me a code</button>
-      <p class="g-err" id="g-err1" role="alert"></p>
-    </form>
-    <form class="gate-card" id="gate-code" hidden novalidate>
-      <h2>Check your inbox</h2>
-      <p class="note">Enter the code we sent to <b id="g-to"></b>. Look in Spam or Promotions if it isn't there in a minute.</p>
-      <label class="fl" for="g-code">Sign-in code</label>
-      <input id="g-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="••••••">
-      <button class="btn primary big" id="g-verify" type="submit">Sign in</button>
-      <div class="g-row"><button type="button" class="btn ghost small" id="g-back">Use a different email</button><button type="button" class="btn ghost small" id="g-resend">Resend code</button></div>
-      <p class="g-err" id="g-err2" role="alert"></p>
+      <label class="fl" for="g-pass">Password</label>
+      <div class="pw"><input id="g-pass" type="password" autocomplete="current-password" placeholder="Your password"><button type="button" class="pw-eye" id="g-eye" aria-label="Show password">Show</button></div>
+      <div class="stack" id="g-pass2-wrap" hidden><label class="fl" for="g-pass2">Confirm password</label><input id="g-pass2" type="password" autocomplete="new-password" placeholder="Type it again"></div>
+      <button class="btn primary big" id="g-submit" type="submit">Sign in</button>
+      <p class="g-err" id="g-err" role="alert"></p>
+      <p class="note" id="g-help">Forgot your password? Ask the site owner to reset your account.</p>
     </form>
     <div class="gate-card" id="gate-off" hidden>
       <h2>Sign-in isn't set up yet</h2>
@@ -1266,12 +1268,23 @@ async function boot(){
 const CFG = window.CV_CONFIG || null;
 const DOMAIN = String(CFG?.allowedDomain || "bitsom.edu.in").toLowerCase();
 const allowedEmail = e => String(e || "").trim().toLowerCase().endsWith("@" + DOMAIN);
-let pendingEmail = "", resendAt = 0, resendT = null;
+let authMode = "signin";
 function showGate(step){
   $("#gate").hidden = false;
-  ["email","code","off"].forEach(s => $("#gate-" + s).hidden = s !== step);
-  if (step === "email") setTimeout(() => $("#g-email").focus(), 0);
-  if (step === "code") setTimeout(() => $("#g-code").focus(), 0);
+  $("#gate-auth").hidden = step !== "auth"; $("#gate-off").hidden = step !== "off";
+  if (step === "auth") setTimeout(() => $("#g-email").focus(), 0);
+}
+function setAuthMode(mode){
+  authMode = mode; const up = mode === "signup";
+  document.querySelectorAll(".gate-tabs [data-mode]").forEach(b => { b.classList.toggle("on", b.dataset.mode === mode); b.setAttribute("aria-selected", b.dataset.mode === mode); });
+  $("#g-title").textContent = up ? "Create your account" : "Welcome back";
+  $("#g-intro").textContent = up ? `Use your @${DOMAIN} email and choose a password of at least 8 characters.` : `Sign in with your @${DOMAIN} email and password.`;
+  $("#g-pass2-wrap").hidden = !up;
+  $("#g-pass").autocomplete = up ? "new-password" : "current-password";
+  $("#g-pass").placeholder = up ? "At least 8 characters" : "Your password";
+  $("#g-submit").textContent = up ? "Create account" : "Sign in";
+  $("#g-help").hidden = up;
+  $("#g-err").textContent = "";
 }
 function authMsg(error, stage){
   const m = String(error?.message || ""), code = String(error?.code || "");
@@ -1282,18 +1295,11 @@ function authMsg(error, stage){
   if (/api key|apikey|no api key/i.test(m)) return "Sign-in is misconfigured: the Supabase key is wrong. The site owner should check SUPABASE_ANON_KEY in Vercel.";
   if (/sending|smtp|email provider/i.test(m)) return "The code email couldn't be sent. The site owner should check the SMTP settings in Supabase. (" + m + ")";
   if (/fetch|network/i.test(m)) return "Couldn't reach the sign-in server. Check your connection.";
-  if (stage === "verify" && /expired|invalid|otp|token/i.test(m)) return "That code is wrong or has expired. Use the newest email, or resend a code.";
-  return (stage === "verify" ? "Sign-in failed: " : "Couldn't send the code: ") + m;
-}
-function tickResend(){
-  const b = $("#g-resend"); clearInterval(resendT);
-  const f = () => { const left = Math.ceil((resendAt - Date.now()) / 1000); b.disabled = left > 0; b.textContent = left > 0 ? `Resend code in ${left}s` : "Resend code"; if (left <= 0) clearInterval(resendT); };
-  f(); resendT = setInterval(f, 1000);
-}
-async function sendCode(email, errEl){
-  const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
-  if (error) { errEl.textContent = authMsg(error, "send"); return false; }
-  pendingEmail = email; resendAt = Date.now() + 60000; tickResend(); return true;
+  if (/invalid login credentials/i.test(m)) return "Wrong email or password. New here? Use Create account.";
+  if (/already registered|already exists/i.test(m)) return "An account with this email already exists. Use Sign in instead.";
+  if (/email not confirmed/i.test(m)) return "This account isn't confirmed yet. The site owner needs to turn off 'Confirm email' in Supabase.";
+  if (/password/i.test(m)) return "Choose a stronger password: at least 8 characters. (" + m + ")";
+  return (stage === "signup" ? "Couldn't create the account: " : "Sign-in failed: ") + m;
 }
 function enter(user){
   me = user;
@@ -1303,8 +1309,7 @@ function enter(user){
   boot();
 }
 async function startStandalone(){
-  $("#g-intro").textContent = `We'll email a sign-in code to your @${DOMAIN} address. No password needed.`;
-  $("#g-email").placeholder = "you@" + DOMAIN;
+  $("#g-email").placeholder = "you@" + DOMAIN; setAuthMode("signin");
   if (CFG?.noLogin) { document.documentElement.classList.remove("locked"); return boot(); }
   if (!CFG?.supabaseUrl || !CFG?.supabaseAnonKey || !window.supabase?.createClient) return showGate("off");
   sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
@@ -1312,34 +1317,38 @@ async function startStandalone(){
   try { session = (await sb.auth.getSession()).data.session; } catch {}
   if (session && allowedEmail(session.user.email)) return enter(session.user);
   if (session) await sb.auth.signOut().catch(() => {});
-  showGate("email");
+  showGate("auth");
 }
-$("#gate-email").addEventListener("submit", async e => {
+document.querySelectorAll(".gate-tabs [data-mode]").forEach(b => b.onclick = () => setAuthMode(b.dataset.mode));
+$("#g-eye").onclick = () => {
+  const show = $("#g-pass").type === "password";
+  ["#g-pass", "#g-pass2"].forEach(s => $(s).type = show ? "text" : "password");
+  $("#g-eye").textContent = show ? "Hide" : "Show"; $("#g-eye").setAttribute("aria-label", show ? "Hide password" : "Show password");
+};
+$("#gate-auth").addEventListener("submit", async e => {
   e.preventDefault();
-  const email = $("#g-email").value.trim().toLowerCase(), err = $("#g-err1"), b = $("#g-send");
+  const email = $("#g-email").value.trim().toLowerCase(), pass = $("#g-pass").value, err = $("#g-err"), b = $("#g-submit");
+  const up = authMode === "signup";
   err.textContent = "";
-  if (!/^[^\s@]+@[^\s@]+$/.test(email)) { err.textContent = "Enter your full email address."; return; }
-  if (!allowedEmail(email)) { err.textContent = `Use your @${DOMAIN} email. Other addresses can't sign in.`; return; }
-  b.disabled = true; b.textContent = "Sending…";
-  const ok = await sendCode(email, err);
-  b.disabled = false; b.textContent = "Email me a code";
-  if (ok) { $("#g-to").textContent = email; $("#g-code").value = ""; $("#g-err2").textContent = ""; showGate("code"); }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = "Enter your full email address."; return; }
+  if (!allowedEmail(email)) { err.textContent = `Use your @${DOMAIN} email. Other addresses can't ${up ? "register" : "sign in"}.`; return; }
+  if (!pass) { err.textContent = "Enter your password."; return; }
+  if (up && pass.length < 8) { err.textContent = "Choose a password of at least 8 characters."; return; }
+  if (up && pass !== $("#g-pass2").value) { err.textContent = "The two passwords don't match."; return; }
+  const label = b.textContent; b.disabled = true; b.textContent = up ? "Creating account…" : "Signing in…";
+  const { data, error } = up ? await sb.auth.signUp({ email, password: pass }) : await sb.auth.signInWithPassword({ email, password: pass });
+  b.disabled = false; b.textContent = label;
+  if (error) { err.textContent = authMsg(error, up ? "signup" : "signin"); return; }
+  if (up && !data.session) {
+    if (data.user && Array.isArray(data.user.identities) && !data.user.identities.length) err.textContent = "An account with this email already exists. Use Sign in instead.";
+    else err.textContent = "Account created, but it needs email confirmation. The site owner should turn off 'Confirm email' in Supabase.";
+    return;
+  }
+  const user = data.session?.user || data.user;
+  if (!allowedEmail(user?.email)) { await sb.auth.signOut(); err.textContent = `Only @${DOMAIN} email addresses can sign in.`; return; }
+  if (up) toast("Account created. Welcome to CV Studio!");
+  enter(user);
 });
-$("#gate-code").addEventListener("submit", async e => {
-  e.preventDefault();
-  const token = $("#g-code").value.replace(/\D/g, ""), err = $("#g-err2"), b = $("#g-verify");
-  err.textContent = "";
-  if (token.length < 6) { err.textContent = "Enter the full code from the email."; return; }
-  b.disabled = true; b.textContent = "Checking…";
-  const { data, error } = await sb.auth.verifyOtp({ email: pendingEmail, token, type: "email" });
-  b.disabled = false; b.textContent = "Sign in";
-  if (error) { err.textContent = authMsg(error, "verify"); return; }
-  if (!allowedEmail(data?.user?.email)) { await sb.auth.signOut(); err.textContent = `Only @${DOMAIN} email addresses can sign in.`; return; }
-  enter(data.user);
-});
-$("#g-code").addEventListener("input", e => { const v = e.target.value.replace(/\D/g, ""); e.target.value = v; if (v.length === (Number(CFG?.otpLength) || 6)) $("#gate-code").requestSubmit(); });
-$("#g-back").onclick = () => { $("#g-err1").textContent = ""; showGate("email"); };
-$("#g-resend").onclick = async () => { $("#g-err2").textContent = ""; if (await sendCode(pendingEmail, $("#g-err2"))) toast("New code sent to " + pendingEmail); };
 $("#btn-signout").onclick = async () => { await sb?.auth.signOut().catch(() => {}); location.reload(); };
 
 if (window.claude) boot(); else startStandalone();
