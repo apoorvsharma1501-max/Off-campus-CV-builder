@@ -1232,7 +1232,16 @@ async function exportPdf(){
       else { line.push({ ...tk, x: x + s }); x += s + w; } });
     if (line.length) lines.push(line); if (!lines.length) lines.push([]); return lines;
   }
-  const draw = (lines, x0, y0, sz = FS, it = false) => lines.forEach((ln, li) => ln.forEach(tk => { font(tk.b, sz, it); doc.text(tk.w, x0 + tk.x, y0 + li * LH); }));
+  // Draw each line as runs of same-weight text with real space characters, so ATS text extraction keeps word gaps
+  const draw = (lines, x0, y0, sz = FS, it = false) => lines.forEach((ln, li) => {
+    const runs = [];
+    ln.forEach(tk => {
+      const last = runs[runs.length - 1];
+      if (last && last.b === tk.b) last.text += (tk.sp ? " " : "") + tk.w;
+      else { font(tk.b, sz, it); const lead = tk.sp ? " " : ""; runs.push({ b: tk.b, text: lead + tk.w, x: tk.x - (lead ? doc.getTextWidth(" ") : 0) }); }
+    });
+    runs.forEach(r => { font(r.b, sz, it); doc.text(r.text, x0 + r.x, y0 + li * LH); });
+  });
   const textAt = (s, x, yy, o = {}) => { font(o.b, o.sz || FS, o.i); doc.text(sanPdf(s), x, yy, o.align ? { align: o.align } : undefined); };
   doc.setTextColor(0); doc.setLineWidth(0.5); doc.setDrawColor(40);
 
