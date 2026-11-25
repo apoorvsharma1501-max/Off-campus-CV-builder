@@ -1,6 +1,6 @@
 <title>Off-Campus CV Studio</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=Tinos:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&family=Arimo:ital,wght@0,400;0,700;1,400;1,700&display=swap">
 <style>
 /* Layout: three-pane placement workbench — CV list | A4 paper canvas | JD tailoring rail */
 :root{
@@ -51,6 +51,7 @@ button,input,textarea{font:inherit;color:inherit}
 .main{min-width:0;padding:16px;display:flex;flex-direction:column;gap:12px}
 @media (max-width:1180px){
   .app{grid-template-columns:220px minmax(0,1fr)}
+  .side{position:static;max-height:none}
   .rail{grid-column:1 / -1;position:static;max-height:none;border-left:0;border-top:1px solid var(--line)}
 }
 @media (max-width:760px){
@@ -209,6 +210,81 @@ mark.kw{background:var(--mark);color:inherit;padding:0 1px;border-radius:2px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:9px;font-size:13px;z-index:20;max-width:min(92vw,520px);box-shadow:0 8px 24px rgba(0,0,0,.25);display:flex;gap:14px;align-items:center}
 .toast-act{background:none;border:0;color:var(--bg);font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
 
+/* ---------- CV templates (the paper is print: fixed ink colours in both themes) ---------- */
+.paper{--cv-accent:#1f4fbf;--cv-soft:#444}
+select{width:100%;border:1px solid var(--line);background:var(--panel-2);border-radius:8px;padding:7px 9px;font:inherit;color:inherit}
+.field-tpl{flex:0 1 130px}
+.cv-contact{font-size:13px}
+.t-campus .cv-contact,.t-campus .g-loc{display:none}
+.g-loc:empty{min-width:4em}
+.edu-e{position:relative;padding:1px 0 3px}
+.edu-e:hover .row-tools{display:flex}
+.e1{display:flex;justify-content:space-between;gap:12px;font-weight:700}
+.e2{font-style:italic;display:flex;flex-wrap:wrap}
+.e2 .e-f:not(:first-child):not(.e-empty)::before{content:"|";padding:0 8px;font-style:normal;color:#999}
+.e2 .e-f:not(:first-child).e-empty:not(:focus)::before{content:none}
+.edu-e:not(:hover) .e-empty:not(:focus){display:none}
+
+/* shared look for Classic, Modern and Compact */
+.paper:not(.t-campus) .cv-sub,.paper:not(.t-campus) .cv-school{display:none}
+.paper:not(.t-campus) .sec{border:0;margin-top:12px}
+.paper:not(.t-campus) .sec-bar{background:none;color:var(--ink);border-bottom:1px solid var(--ink);padding:0 0 1px;min-height:0;margin-bottom:4px}
+.paper:not(.t-campus) .sec-title{font-size:13.6px;letter-spacing:.06em}
+.paper:not(.t-campus) .grp{padding:2px 0 3px}
+.paper:not(.t-campus) .grp+.grp{border-top:0;margin-top:5px}
+.paper:not(.t-campus) .grp-head{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;row-gap:0;background:none;border:0;margin:0 0 1px;padding:0}
+.paper:not(.t-campus) .g-org{grid-area:1/1;font-weight:700}
+.paper:not(.t-campus) .g-dates{grid-area:1/2;font-weight:700;text-align:right}
+.paper:not(.t-campus) .g-role{grid-area:2/1;font-style:italic}
+.paper:not(.t-campus) .g-loc{grid-area:2/2;font-style:italic;text-align:right}
+.paper:not(.t-campus) .bul::before{border-radius:50%;width:4.5px;height:4.5px;margin-left:4px}
+.paper:not(.t-campus) .pts .pt{grid-template-columns:16px minmax(0,1fr)}
+.paper:not(.t-campus) .pts.yr-1 .pt{grid-template-columns:16px minmax(0,1fr) auto}
+.paper:not(.t-campus) .pt-lab{grid-column:1/-1;font-weight:700;font-style:italic;padding:2px 0 0}
+.paper:not(.t-campus) .pt-lab:empty{display:none}
+.paper:not(.t-campus) .lab-1 .pt.run-start:not(:first-child){border-top:0;margin-top:2px;padding-top:0}
+
+.t-classic{font-size:13.6px;line-height:1.3;padding:40px 48px 44px}
+.t-classic .cv-head,.t-compact .cv-head{display:block;text-align:center;margin-bottom:6px}
+.t-classic .cv-name{font-size:24px;letter-spacing:.02em}
+.t-classic .cv-contact{margin-top:3px}
+
+.t-modern{font-family:"Arimo",Arial,Helvetica,sans-serif;font-size:12.6px;line-height:1.36;padding:40px 46px 44px}
+.t-modern .cv-name{font-size:28px;letter-spacing:-.01em;color:#111}
+.t-modern .cv-contact{color:var(--cv-soft);margin-top:4px;font-size:12.4px}
+.t-modern .sec-bar{border-bottom:1.5px solid var(--cv-accent)!important}
+.t-modern .sec-title{color:var(--cv-accent);font-size:13px!important;letter-spacing:.08em!important}
+.t-modern .g-role,.t-modern .g-loc,.t-modern .e2{color:var(--cv-soft)}
+
+.t-compact{font-size:12.6px;line-height:1.2;padding:28px 38px 34px}
+.t-compact .cv-name{font-size:19px;font-variant:small-caps;letter-spacing:.04em}
+.t-compact .cv-contact{font-size:12px}
+.t-compact .sec{margin-top:8px!important}
+.t-compact .sec-title{font-size:12.6px!important;font-variant:small-caps;text-transform:none!important;letter-spacing:.05em}
+.t-compact .grp+.grp{margin-top:3px!important}
+
+/* template gallery */
+.tpl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tpl-card{display:flex;flex-direction:column;gap:6px;text-align:left;border:1.5px solid var(--line);border-radius:10px;padding:8px;background:var(--panel);cursor:pointer}
+.tpl-card:hover{border-color:var(--accent)}
+.tpl-card.on{border-color:var(--accent);background:var(--accent-soft)}
+.tpl-name{font-weight:600;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tpl-desc{font-size:12px;color:var(--muted);line-height:1.35}
+.mini{height:96px;background:#fff;border:1px solid #ddd;border-radius:4px;padding:9px 10px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.mini i{display:block;height:3px;background:#cfcfcf;border-radius:1px}
+.mini i.w{width:72%}
+.mini i.n{height:6px;width:45%;background:#222}
+.mini i.c{height:2px;width:60%;background:#aaa}
+.mini i.s{height:5px;background:#5b5b5b;margin-top:3px}
+.m-classic i.n,.m-classic i.c,.m-compact i.n,.m-compact i.c{align-self:center}
+.m-classic i.s,.m-compact i.s{height:2px;background:#222;margin-top:5px}
+.m-modern i.n{height:8px;width:55%}
+.m-modern i.s{height:2px;background:#1f4fbf;margin-top:5px}
+.m-compact{gap:2.5px}
+.m-compact i.s{margin-top:3px}
+.m-campus i.c{display:none}
+@media (max-width:420px){.tpl-grid{grid-template-columns:minmax(0,1fr)}}
+
 /* signed-in user */
 .user{display:flex;gap:8px;align-items:center;font-size:12px;min-width:0}
 .user span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px;opacity:.9}
@@ -336,6 +412,7 @@ html.locked .top,html.locked .app{display:none}
       <div class="field"><label class="fl" for="cv-name">CV name</label><input id="cv-name" placeholder="e.g. Master CV"></div>
       <div class="field"><label class="fl" for="cv-company">Target company</label><input id="cv-company" placeholder="e.g. Unilever"></div>
       <div class="field"><label class="fl" for="cv-role">Target role</label><input id="cv-role" placeholder="e.g. Brand Manager"></div>
+      <div class="field field-tpl"><label class="fl" for="cv-tpl">Template</label><select id="cv-tpl"></select></div>
       <div class="tb-actions">
         <button class="btn" id="btn-undo" title="Undo (Ctrl+Z)">Undo</button>
         <button class="btn" id="btn-pdf">Export PDF</button>
@@ -350,8 +427,10 @@ html.locked .top,html.locked .app{display:none}
   <aside class="rail" aria-label="Tailoring tools">
     <div class="tabs" role="tablist">
       <button role="tab" data-tab="jd" class="on" id="tab-btn-jd">JD match</button>
+      <button role="tab" data-tab="tpl" id="tab-btn-tpl">Template</button>
       <button role="tab" data-tab="sec" id="tab-btn-sec">Sections</button>
     </div>
+    <section id="tab-tpl" hidden></section>
     <section id="tab-jd">
       <div class="field"><label class="fl" for="jd">Job description</label>
         <textarea id="jd" placeholder="Paste the full job description here. Keywords are pulled out instantly and matched against your CV."></textarea></div>
@@ -393,10 +472,18 @@ function withTimeout(p, ms){ return Promise.race([p, new Promise((_, rej) => set
 
 /* ---------- data ---------- */
 const P = (text, label = "", year = "") => ({ id: uid(), text, label, year });
-const G = (head, points, org = "", role = "", dates = "") => ({ id: uid(), showHead: head, org, role, dates, points });
+const G = (head, points, org = "", role = "", dates = "", location = "") => ({ id: uid(), showHead: head, org, role, dates, location, points });
+const TEMPLATES = {
+  campus:  { name: "Campus", desc: "Grey section bars, an education table and bucket columns, like the placement portal." },
+  classic: { name: "Classic", desc: "Centred name, ruled headings, dates on the right. The standard format US and Indian recruiters expect." },
+  modern:  { name: "Modern", desc: "Clean sans-serif type with blue headings. Suits product, tech and startup roles." },
+  compact: { name: "Compact", desc: "Classic layout with tighter spacing and smaller type, to fit more on one page." }
+};
+const tpl = cv => TEMPLATES[cv?.template] ? cv.template : "campus";
 function exampleCV(){
   return { id: uid(), name: "Master CV", company: "", role: "", jd: "", keywords: [], kwSource: "", example: true, updatedAt: Date.now(),
-    profile: { name: "Riya Kapoor", line2: "Class of 2027", school: "Your B-School" },
+    template: "campus",
+    profile: { name: "Riya Kapoor", line2: "Class of 2027", school: "Your B-School", contact: "riya.kapoor@email.com  |  +91 98000 00000  |  Mumbai  |  linkedin.com/in/riyakapoor" },
     sections: [
       { id: uid(), title: "Education", type: "table", columns: ["Degree","Institute","Year","Percentage","Remarks"], rows: [
         { id: uid(), cells: ["MBA","Your B-School","2027","Pursuing","Dean's List"] },
@@ -413,12 +500,12 @@ function exampleCV(){
         P("Commissioned a **2 MWp solar plant**, delivering **₹60M in cost savings** and offsetting **5,800 MT CO₂** emissions", "Sustainability"),
         P("Cut **production losses by ₹2.5M** by deploying high-reliability HT panels, lifting machine uptime to **~99%**", "Operations"),
         P("Received the **'On-the-Spot' award** for leading the plant's first **ISO 50001 energy audit**", "Awards & Recognition") ],
-        "Northwind Power Ltd.", "Senior Engineer, Plant Operations", "Jul 2020 – Jun 2025") ] },
+        "Northwind Power Ltd.", "Senior Engineer, Plant Operations", "Jul 2020 – Jun 2025", "Pune") ] },
       { id: uid(), title: "Summer Internship", type: "list", groups: [ G(true, [
         P("Built a **go-to-market plan** for a new snack SKU across **3 tier-2 cities**, projected to reach **18% penetration** in year one", "Project"),
         P("Ran **42 retailer interviews** and a **survey of 350 consumers** to size demand and test price points", "Research"),
         P("Earned a **pre-placement interview** on the strength of the final presentation to the CMO", "Outcome") ],
-        "Acme Consumer Goods", "Summer Intern, Marketing", "Apr – Jun 2026") ] },
+        "Acme Consumer Goods", "Summer Intern, Marketing", "Apr – Jun 2026", "Mumbai") ] },
       { id: uid(), title: "Positions of Responsibility", type: "list", groups: [ G(false, [
         P("Placement Committee member: coordinated **60+ recruiters** and **400+ interviews** in the final placement season", "", "2026"),
         P("Led a **12-member** organising team for the annual management fest with **3,000+ footfall**", "", "2025") ]) ] },
@@ -429,7 +516,8 @@ function exampleCV(){
 }
 function blankCV(){
   return { id: uid(), name: "New CV", company: "", role: "", jd: "", keywords: [], kwSource: "", example: false, updatedAt: Date.now(),
-    profile: { name: "Your Name", line2: "Class of 2027", school: "Your B-School" },
+    template: "campus",
+    profile: { name: "Your Name", line2: "Class of 2027", school: "Your B-School", contact: "" },
     sections: [
       { id: uid(), title: "Education", type: "table", columns: ["Degree","Institute","Year","Percentage","Remarks"], rows: [ { id: uid(), cells: ["MBA","","","Pursuing",""] } ] },
       { id: uid(), title: "Academic Achievements", type: "list", groups: [ G(false, []) ] },
@@ -746,16 +834,37 @@ function renderToolbar(){
 }
 const tb = (act, label, opts = {}) => `<button type="button" data-act="${act}" ${opts.dis ? "disabled" : ""} ${opts.confirm ? "data-confirm" : ""} ${opts.title ? `title="${esc(opts.title)}"` : ""}>${label}</button>`;
 function renderPaper(){
-  const cv = cur(); const pr = cv.profile;
+  const cv = cur(); const pr = cv.profile; const t = tpl(cv);
+  $("#paper").className = "paper t-" + t;
   let h = cv.example ? `<div class="example-note"><span><b>Example CV.</b> Click any text to replace it with your own, or start from a blank page.</span><span class="sp"></span><button class="btn small" data-act="start-blank">Start blank</button></div>` : "";
-  h += `<div class="cv-head"><div><div class="cv-name" contenteditable="true" data-field="pname" data-ph="Your name">${esc(pr.name)}</div><div class="cv-sub" contenteditable="true" data-field="pline" data-ph="Class of 2027">${esc(pr.line2)}</div></div><div class="cv-school" contenteditable="true" data-field="pschool" data-ph="School">${esc(pr.school)}</div></div>`;
-  cv.sections.forEach((s, i) => { h += sectionHtml(s, i, cv.sections.length); });
+  h += `<div class="cv-head"><div class="cv-id"><div class="cv-name" contenteditable="true" data-field="pname" data-ph="Your name">${esc(pr.name)}</div><div class="cv-sub" contenteditable="true" data-field="pline" data-ph="Class of 2027">${esc(pr.line2)}</div><div class="cv-contact" contenteditable="true" data-field="pcontact" data-ph="email | phone | city | linkedin.com/in/you">${esc(pr.contact || "")}</div></div><div class="cv-school" contenteditable="true" data-field="pschool" data-ph="School">${esc(pr.school)}</div></div>`;
+  cv.sections.forEach((s, i) => { h += sectionHtml(s, i, cv.sections.length, t); });
   h += `<button class="add-sec" data-act="open-add">+ Add a new section</button>`;
   $("#paper").innerHTML = h;
   layoutPaper();
   if (S.edit) { const ta = $("#ed-text"); const ae = document.activeElement; if (ta && !S.ai?.busy && (!ae || ae === document.body || $("#paper").contains(ae))) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } updateCount(); }
 }
-function sectionHtml(s, i, n){
+/* Find education-style columns so non-campus templates can show a table as entries */
+function eduMap(s){
+  const cols = s.columns.map(c => String(c).toLowerCase());
+  const find = re => cols.findIndex(c => re.test(c));
+  const inst = find(/institut|school|college|university|board/), deg = find(/degree|course|program|qualification|class/), year = find(/year|date|batch/);
+  if (inst < 0 || deg < 0) return null;
+  const rest = cols.map((_, i) => i).filter(i => i !== inst && i !== deg && i !== year);
+  return { inst, deg, year, rest };
+}
+const eduLine2 = (s, r, m) => [m.deg, ...m.rest].map(ci => stripMd(r.cells[ci] || "").trim()).filter(Boolean).join("  |  ");
+function sectionHtml(s, i, n, t = "campus"){
+  const em = t !== "campus" && s.type === "table" ? eduMap(s) : null;
+  if (em) {
+    const tools = `<span class="tools">${tb("sec-up","↑",{dis:i===0,title:"Move section up"})}${tb("sec-down","↓",{dis:i===n-1,title:"Move section down"})}${tb("add-row","+ Entry")}${tb("del-sec","Delete",{confirm:true})}</span>`;
+    let h = `<div class="sec" data-sec="${s.id}"><div class="sec-bar"><span class="sec-title" contenteditable="true" data-field="title" data-ph="Section title">${esc(s.title)}</span><span class="sp"></span>${tools}</div>`;
+    const cell = (r, ci, cls) => ci < 0 ? "" : `<span class="${cls} ${r.cells[ci] ? "" : "e-empty"}" contenteditable="true" data-field="cell" data-ci="${ci}" data-ph="${esc(s.columns[ci])}">${hl(mdHtml(r.cells[ci] || ""))}</span>`;
+    s.rows.forEach((r, ri) => {
+      h += `<div class="edu-e" data-row="${r.id}"><div class="e1">${cell(r, em.inst, "e-inst")}${cell(r, em.year, "e-year")}</div><div class="e2">${[em.deg, ...em.rest].map(ci => cell(r, ci, "e-f")).join("")}</div><span class="tools row-tools">${tb("row-up","↑",{dis:ri===0})}${tb("row-down","↓",{dis:ri===s.rows.length-1})}${tb("del-row","✕",{confirm:true})}</span></div>`;
+    });
+    return h + `</div>`;
+  }
   const tools = `<span class="tools">${tb("sec-up","↑",{dis:i===0,title:"Move section up"})}${tb("sec-down","↓",{dis:i===n-1,title:"Move section down"})}${s.type === "list" ? tb("add-group","+ Entry",{title:"Add an organisation or project block"}) + tb("add-pt-first","+ Bullet") : tb("add-row","+ Row") + tb("add-col","+ Column") + tb("del-col","− Column",{dis:s.columns.length<2})}${tb("del-sec","Delete",{confirm:true})}</span>`;
   let h = `<div class="sec" data-sec="${s.id}"><div class="sec-bar"><span class="sec-title" contenteditable="true" data-field="title" data-ph="Section title">${esc(s.title)}</span><span class="sp"></span>${tools}</div>`;
   if (s.type === "table") {
@@ -770,7 +879,7 @@ function sectionHtml(s, i, n){
 function groupHtml(s, g, gi){
   const hasLab = g.points.some(p => p.label?.trim()), hasYr = g.points.some(p => p.year?.trim());
   let h = `<div class="grp" data-grp="${g.id}">`;
-  if (g.showHead) h += `<div class="grp-head"><span class="g-org" contenteditable="true" data-field="org" data-ph="Organisation">${esc(g.org)}</span><span class="g-role" contenteditable="true" data-field="role" data-ph="Role">${esc(g.role)}</span><span class="g-dates" contenteditable="true" data-field="dates" data-ph="Dates">${esc(g.dates)}</span></div>`;
+  if (g.showHead) h += `<div class="grp-head"><span class="g-org" contenteditable="true" data-field="org" data-ph="Organisation">${esc(g.org)}</span><span class="g-role" contenteditable="true" data-field="role" data-ph="Role">${esc(g.role)}</span><span class="g-dates" contenteditable="true" data-field="dates" data-ph="Dates">${esc(g.dates)}</span><span class="g-loc" contenteditable="true" data-field="loc" data-ph="Location">${esc(g.location || "")}</span></div>`;
   h += `<div class="pts lab-${hasLab ? 1 : 0} yr-${hasYr ? 1 : 0}">`;
   let prev = null;
   g.points.forEach((p, pi) => {
@@ -849,9 +958,26 @@ function layoutPaper(){
   });
 }
 if (window.ResizeObserver) { const ro = new ResizeObserver(() => layoutPaper()); ro.observe($(".canvas")); ro.observe($("#paper")); }
+function renderTemplates(){
+  const cur_t = tpl(cur());
+  const sel = $("#cv-tpl");
+  if (!sel.options.length) sel.innerHTML = Object.entries(TEMPLATES).map(([k, v]) => `<option value="${k}">${esc(v.name)}</option>`).join("");
+  sel.value = cur_t;
+  $("#tab-tpl").innerHTML = `<p class="eyebrow">Choose a layout</p><p class="note">Your content stays the same. The template changes the look on screen and in the PDF and Word exports.</p>
+  <div class="tpl-grid">${Object.entries(TEMPLATES).map(([k, v]) => `<button type="button" class="tpl-card ${k === cur_t ? "on" : ""}" data-act="set-tpl" data-tpl="${k}" aria-pressed="${k === cur_t}">
+    <span class="mini m-${k}" aria-hidden="true"><i class="n"></i><i class="c"></i><i class="s"></i><i class="l"></i><i class="l w"></i><i class="l"></i><i class="s"></i><i class="l w"></i><i class="l"></i></span>
+    <span class="tpl-name">${esc(v.name)}${k === cur_t ? ' <span class="badge ok">In use</span>' : ""}</span><span class="tpl-desc">${esc(v.desc)}</span></button>`).join("")}</div>
+  <p class="note">All four use real, selectable text in a single column, so applicant tracking systems can read them.</p>`;
+}
+function setTemplate(k){
+  if (!TEMPLATES[k] || tpl(cur()) === k) return;
+  mutate(cv => { cv.template = k; });
+  toast(`Switched to the ${TEMPLATES[k].name} template`, UNDO);
+}
 function renderRail(){
-  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === S.tab));
-  $("#tab-jd").hidden = S.tab !== "jd"; $("#tab-sec").hidden = S.tab !== "sec";
+  document.querySelectorAll(".rail .tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === S.tab));
+  ["jd","tpl","sec"].forEach(k => $("#tab-" + k).hidden = S.tab !== k);
+  renderTemplates();
   const jd = $("#jd"); if (document.activeElement !== jd) jd.value = cur().jd || "";
   const kb = $("#btn-ai-kw"); kb.hidden = S.aiOff; kb.disabled = S.kwBusy; kb.textContent = S.kwBusy ? "Claude is reading the JD…" : "✦ Extract keywords with Claude";
   renderMatch(); renderReview(); renderSections();
@@ -957,6 +1083,7 @@ const A = {
   "kw-add": () => { const inp = $("#kw-new"); const t = inp.value.trim().toLowerCase(); if (!t) return; mutate(cv => { cv.keywords = (cv.keywords || []).concat({ term: t, weight: 2, category: "", off: false }); }, { history: false }); buildHighlight(); renderPaper(); renderMatch(); },
   "kw-local": () => { mutate(cv => { cv.keywords = localKeywords(cv.jd); cv.kwSource = "local"; cv.kwStale = false; }, { history: false }); buildHighlight(); renderPaper(); },
   "add-sec": ({ el }) => addSection(el.dataset.title),
+  "set-tpl": ({ el }) => setTemplate(el.dataset.tpl),
   "add-sec-custom": () => { const t = $("#sec-custom").value.trim(); if (t) addSection(t); },
 };
 function addSection(title){
@@ -997,27 +1124,26 @@ $("#paper").addEventListener("focusout", e => {
   const el = e.target.closest?.("[data-field]"); if (!el) return;
   const val = el.innerText.replace(/\s+/g, " ").trim();
   const f = el.dataset.field, sec = el.closest("[data-sec]")?.dataset.sec, grp = el.closest("[data-grp]")?.dataset.grp, row = el.closest("[data-row]")?.dataset.row, ci = +el.dataset.ci;
-  const cv = cur(); const s = cv.sections.find(x => x.id === sec);
-  const ref = {
-    pname: [cv.profile, "name"], pline: [cv.profile, "line2"], pschool: [cv.profile, "school"],
-    title: s && [s, "title"], col: s && [s.columns, ci], cell: s?.rows && row && [s.rows.find(r => r.id === row).cells, ci],
-    org: grp && [s.groups.find(g => g.id === grp), "org"], role: grp && [s.groups.find(g => g.id === grp), "role"], dates: grp && [s.groups.find(g => g.id === grp), "dates"]
-  }[f];
+  const fieldRef = c => {
+    const s = c.sections.find(x => x.id === sec), g = grp && s?.groups?.find(x => x.id === grp);
+    return {
+      pname: [c.profile, "name"], pline: [c.profile, "line2"], pschool: [c.profile, "school"], pcontact: [c.profile, "contact"],
+      title: s && [s, "title"], col: s && [s.columns, ci], cell: s?.rows && row && [s.rows.find(r => r.id === row).cells, ci],
+      org: g && [g, "org"], role: g && [g, "role"], dates: g && [g, "dates"], loc: g && [g, "location"]
+    }[f];
+  };
+  const ref = fieldRef(cur());
   if (!ref) return;
-  const old = f === "cell" ? stripMd(ref[0][ref[1]]) : ref[0][ref[1]];
+  const old = f === "cell" ? stripMd(ref[0][ref[1]]) : (ref[0][ref[1]] || "");
   if (val === old) return;
-  mutate(c => {
-    const s2 = c.sections.find(x => x.id === sec);
-    const r2 = { pname: [c.profile, "name"], pline: [c.profile, "line2"], pschool: [c.profile, "school"], title: s2 && [s2, "title"], col: s2 && [s2.columns, ci], cell: s2?.rows && row && [s2.rows.find(r => r.id === row).cells, ci],
-      org: grp && [s2.groups.find(g => g.id === grp), "org"], role: grp && [s2.groups.find(g => g.id === grp), "role"], dates: grp && [s2.groups.find(g => g.id === grp), "dates"] }[f];
-    r2[0][r2[1]] = val;
-  }, { render: false });
+  mutate(c => { const r2 = fieldRef(c); r2[0][r2[1]] = val; }, { render: false });
   if (f === "title") renderSections();
   if (cur().example === false && $(".example-note")) $(".example-note").remove();
 });
 
 /* toolbar + sidebar */
 ["name","company","role"].forEach(k => $("#cv-" + k).addEventListener("change", e => mutate(cv => { cv[k] = e.target.value.trim(); }, { render: false })));
+$("#cv-tpl").addEventListener("change", e => setTemplate(e.target.value));
 $("#btn-undo").onclick = undo;
 document.addEventListener("keydown", e => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey && !e.target.closest?.("input,textarea,[contenteditable]")) { e.preventDefault(); undo(); }
@@ -1083,127 +1209,234 @@ function pdfTokens(text){
   });
   return out;
 }
+const PDF_T = {
+  campus:  { font: "times",     fs: 9.6, lh: 11.4, m: 28, name: 15 },
+  classic: { font: "times",     fs: 10,  lh: 12.1, m: 36, name: 18, center: true },
+  modern:  { font: "helvetica", fs: 9,   lh: 11.6, m: 34, name: 20, accent: [31, 79, 191], soft: 68 },
+  compact: { font: "times",     fs: 9.3, lh: 10.9, m: 26, name: 15, center: true }
+};
 async function exportPdf(){
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your connection and reload."); return; }
-  const cv = cur(); const doc = new window.jspdf.jsPDF({ unit: "pt", format: "a4" });
-  const PW = 595.28, PH = 841.89, M = 28, CW = PW - 2 * M, FS = 9.6, LH = 11.4;
+  const cv = cur(), t = tpl(cv), T = PDF_T[t], campus = t === "campus";
+  const doc = new window.jspdf.jsPDF({ unit: "pt", format: "a4" });
+  const PW = 595.28, PH = 841.89, M = T.m, CW = PW - 2 * M, FS = T.fs, LH = T.lh;
   let y = M;
-  const font = (b, sz = FS) => { doc.setFont("times", b ? "bold" : "normal"); doc.setFontSize(sz); };
+  const font = (b, sz = FS, it = false) => { doc.setFont(T.font, b && it ? "bolditalic" : b ? "bold" : it ? "italic" : "normal"); doc.setFontSize(sz); };
+  const ink = (soft) => soft && T.soft ? doc.setTextColor(T.soft) : doc.setTextColor(0);
   const need = h => { if (y + h > PH - M) { doc.addPage(); y = M; } };
-  function wrap(text, maxW, sz = FS){
+  function wrap(text, maxW, sz = FS, it = false){
     const lines = []; let line = [], x = 0;
-    font(false, sz); const spW = doc.getTextWidth(" ");
-    pdfTokens(text).forEach(t => { font(t.b, sz); const w = doc.getTextWidth(t.w); const s = t.sp && line.length ? spW : 0;
-      if (line.length && x + s + w > maxW) { lines.push(line); line = []; x = 0; line.push({ ...t, x: 0 }); x = w; }
-      else { line.push({ ...t, x: x + s }); x += s + w; } });
+    font(false, sz, it); const spW = doc.getTextWidth(" ");
+    pdfTokens(text).forEach(tk => { font(tk.b, sz, it); const w = doc.getTextWidth(tk.w); const s = tk.sp && line.length ? spW : 0;
+      if (line.length && x + s + w > maxW) { lines.push(line); line = [{ ...tk, x: 0 }]; x = w; }
+      else { line.push({ ...tk, x: x + s }); x += s + w; } });
     if (line.length) lines.push(line); if (!lines.length) lines.push([]); return lines;
   }
-  const draw = (lines, x0, y0, sz = FS) => lines.forEach((ln, li) => ln.forEach(t => { font(t.b, sz); doc.text(t.w, x0 + t.x, y0 + li * LH); }));
-  doc.setTextColor(0);
-  font(true, 15); doc.text(sanPdf(cv.profile.name), M, y + 13);
-  font(false, 10.5); doc.text(sanPdf(cv.profile.line2), M, y + 28);
-  font(true, 10.5); doc.text(sanPdf(cv.profile.school), PW - M, y + 13, { align: "right" });
-  y += 38;
-  doc.setLineWidth(0.5); doc.setDrawColor(40);
+  const draw = (lines, x0, y0, sz = FS, it = false) => lines.forEach((ln, li) => ln.forEach(tk => { font(tk.b, sz, it); doc.text(tk.w, x0 + tk.x, y0 + li * LH); }));
+  const textAt = (s, x, yy, o = {}) => { font(o.b, o.sz || FS, o.i); doc.text(sanPdf(s), x, yy, o.align ? { align: o.align } : undefined); };
+  doc.setTextColor(0); doc.setLineWidth(0.5); doc.setDrawColor(40);
+
+  // header
+  if (campus) {
+    textAt(cv.profile.name, M, y + 13, { b: true, sz: 15 });
+    textAt(cv.profile.line2, M, y + 28, { sz: 10.5 });
+    textAt(cv.profile.school, PW - M, y + 13, { b: true, sz: 10.5, align: "right" });
+    y += 38;
+  } else {
+    const x = T.center ? PW / 2 : M, align = T.center ? "center" : undefined;
+    textAt(cv.profile.name, x, y + T.name * 0.8, { b: true, sz: T.name, align });
+    y += T.name + 2;
+    if ((cv.profile.contact || "").trim()) { ink(true); textAt(cv.profile.contact, x, y + FS, { sz: FS - 0.3, align }); ink(); y += LH + 2; }
+    y += 4;
+  }
+
   cv.sections.forEach(s => {
-    need(16 + LH * 2 + 6);
-    doc.setFillColor(91, 91, 91); doc.rect(M, y, CW, 15, "F");
-    doc.setTextColor(255); font(true, 10.5); doc.text(sanPdf(s.title).toUpperCase(), M + 6, y + 11); doc.setTextColor(0);
-    y += 15;
-    if (s.type === "table") {
-      const lens = s.columns.map((c, ci) => Math.min(40, Math.max(c.length + 2, ...s.rows.map(r => stripMd(r.cells[ci] || "").length))));
-      const tot = lens.reduce((a, b) => a + b, 0); const widths = lens.map(l => Math.max(38, CW * l / tot)); const sc = CW / widths.reduce((a, b) => a + b, 0); widths.forEach((w, i) => widths[i] = w * sc);
-      const rows = [{ cells: s.columns, head: true }].concat(s.rows);
-      rows.forEach(r => {
-        const cells = r.cells.map((c, ci) => wrap(c || "", widths[ci] - 8));
-        const h = Math.max(...cells.map(l => l.length)) * LH + 4;
-        need(h);
-        let x = M;
-        cells.forEach((lines, ci) => { if (r.head) { doc.setFillColor(214, 214, 214); doc.rect(x, y, widths[ci], h, "FD"); } else doc.rect(x, y, widths[ci], h); draw(lines, x + 4, y + FS + 1); x += widths[ci]; });
-        y += h;
-      });
+    // section heading
+    if (campus) {
+      need(16 + LH * 2 + 6);
+      doc.setFillColor(91, 91, 91); doc.rect(M, y, CW, 15, "F");
+      doc.setTextColor(255); textAt(String(s.title).toUpperCase(), M + 6, y + 11, { b: true, sz: 10.5 }); doc.setTextColor(0);
+      y += 15;
     } else {
-      s.groups.forEach(g => {
-        const hasLab = g.points.some(p => p.label?.trim()), hasYr = g.points.some(p => p.year?.trim());
-        if (g.showHead) {
-          need(14 + LH);
-          doc.setFillColor(236, 236, 236); doc.rect(M, y, CW, 14, "F");
-          font(true); const org = sanPdf(g.org); doc.text(org, M + 6, y + 10);
-          if (g.role) { const ow = doc.getTextWidth(org); font(false); doc.text((org ? "  |  " : "") + sanPdf(g.role), M + 6 + ow, y + 10); }
-          font(false); doc.text(sanPdf(g.dates), PW - M - 6, y + 10, { align: "right" });
-          y += 15;
-        }
-        const labW = hasLab ? 98 : 0, yrW = hasYr ? 34 : 0;
-        const bx = M + 6 + labW, tx = bx + 9, tw = CW - 12 - labW - 9 - yrW;
-        let prev = null; y += 2;
-        g.points.forEach(p => {
-          if (!p.text.trim()) return;
-          const start = (p.label || "") !== prev; prev = p.label || "";
-          const lines = wrap(p.text, tw);
-          const lab = hasLab && start ? wrap(p.label, labW - 6) : [];
-          const h = Math.max(lines.length, lab.length) * LH + 1.5;
+      need(FS + 8 + LH * 2);
+      if (T.accent) doc.setTextColor(...T.accent);
+      textAt(String(s.title).toUpperCase(), M, y + FS + 1, { b: true, sz: FS + (t === "compact" ? 0.6 : 1.2) });
+      doc.setTextColor(0);
+      if (T.accent) { doc.setDrawColor(...T.accent); doc.setLineWidth(1); } else { doc.setDrawColor(0); doc.setLineWidth(0.6); }
+      doc.line(M, y + FS + 4, PW - M, y + FS + 4);
+      doc.setDrawColor(40); doc.setLineWidth(0.5);
+      y += FS + 8;
+    }
+
+    if (s.type === "table") {
+      const em = campus ? null : eduMap(s);
+      if (em) {
+        s.rows.forEach(r => {
+          const l2 = eduLine2(s, r, em); const lines2 = l2 ? wrap(l2, CW, FS, true) : [];
+          need(LH * (1 + lines2.length) + 3);
+          textAt(stripMd(r.cells[em.inst] || ""), M, y + FS, { b: true });
+          if (em.year >= 0) textAt(stripMd(r.cells[em.year] || ""), PW - M, y + FS, { b: true, align: "right" });
+          y += LH;
+          if (lines2.length) { ink(true); draw(lines2, M, y + FS, FS, true); ink(); y += lines2.length * LH; }
+          y += 3;
+        });
+      } else {
+        const lens = s.columns.map((c, ci) => Math.min(40, Math.max(c.length + 2, ...s.rows.map(r => stripMd(r.cells[ci] || "").length))));
+        const tot = lens.reduce((a, b) => a + b, 0); const widths = lens.map(l => Math.max(38, CW * l / tot)); const sc = CW / widths.reduce((a, b) => a + b, 0); widths.forEach((w, i) => widths[i] = w * sc);
+        [{ cells: s.columns, head: true }].concat(s.rows).forEach(r => {
+          const cells = r.cells.map((c, ci) => wrap(c || "", widths[ci] - 8));
+          const h = Math.max(...cells.map(l => l.length)) * LH + 4;
           need(h);
-          if (lab.length) draw(lab, M + 6, y + FS);
-          doc.setFillColor(0, 0, 0); doc.rect(bx + 1, y + FS - 5.2, 3, 3, "F");
-          draw(lines, tx, y + FS);
-          if (hasYr && p.year) { font(false); doc.text(sanPdf(p.year), PW - M - 6, y + FS, { align: "right" }); }
+          let x = M;
+          cells.forEach((lines, ci) => { if (r.head) { doc.setFillColor(214, 214, 214); doc.rect(x, y, widths[ci], h, "FD"); } else doc.rect(x, y, widths[ci], h); draw(lines, x + 4, y + FS + 1); x += widths[ci]; });
           y += h;
         });
-        y += 2;
+      }
+    } else {
+      s.groups.forEach(g => {
+        const pts = g.points.filter(p => p.text.trim());
+        const hasLab = pts.some(p => p.label?.trim()), hasYr = pts.some(p => p.year?.trim());
+        if (g.showHead) {
+          if (campus) {
+            need(14 + LH);
+            doc.setFillColor(236, 236, 236); doc.rect(M, y, CW, 14, "F");
+            font(true); const org = sanPdf(g.org); doc.text(org, M + 6, y + 10);
+            if (g.role) { const ow = doc.getTextWidth(org); font(false); doc.text((org ? "  |  " : "") + sanPdf(g.role), M + 6 + ow, y + 10); }
+            textAt(g.dates, PW - M - 6, y + 10, { align: "right" });
+            y += 15;
+          } else {
+            const two = (g.role || g.location || "").trim();
+            need(LH * (two ? 3 : 2));
+            textAt(g.org, M, y + FS, { b: true }); textAt(g.dates, PW - M, y + FS, { b: true, align: "right" }); y += LH;
+            if (two) { ink(true); textAt(g.role, M, y + FS, { i: true }); textAt(g.location, PW - M, y + FS, { i: true, align: "right" }); ink(); y += LH; }
+          }
+        }
+        if (campus) {
+          const labW = hasLab ? 98 : 0, yrW = hasYr ? 34 : 0;
+          const bx = M + 6 + labW, tx = bx + 9, tw = CW - 12 - labW - 9 - yrW;
+          let prev = null; y += 2;
+          pts.forEach(p => {
+            const start = (p.label || "") !== prev; prev = p.label || "";
+            const lines = wrap(p.text, tw);
+            const lab = hasLab && start ? wrap(p.label, labW - 6) : [];
+            const h = Math.max(lines.length, lab.length) * LH + 1.5;
+            need(h);
+            if (lab.length) draw(lab, M + 6, y + FS);
+            doc.setFillColor(0, 0, 0); doc.rect(bx + 1, y + FS - 5.2, 3, 3, "F");
+            draw(lines, tx, y + FS);
+            if (hasYr && p.year) textAt(p.year, PW - M - 6, y + FS, { align: "right" });
+            y += h;
+          });
+          y += 2;
+        } else {
+          const yrW = hasYr ? 38 : 0, bx = M + 5, tx = M + 15, tw = CW - 15 - yrW;
+          let prev = null;
+          pts.forEach(p => {
+            const start = (p.label || "") !== prev; prev = p.label || "";
+            if (start && p.label?.trim()) { need(LH * 2); textAt(p.label, M, y + FS, { b: true, i: true }); y += LH; }
+            const lines = wrap(p.text, tw);
+            const h = lines.length * LH + 1;
+            need(h);
+            doc.setFillColor(0, 0, 0); doc.circle(bx + 1.2, y + FS - 3.1, 1.15, "F");
+            draw(lines, tx, y + FS);
+            if (hasYr && p.year) textAt(p.year, PW - M, y + FS, { align: "right" });
+            y += h;
+          });
+          y += t === "compact" ? 2 : 4;
+        }
       });
     }
-    y += 5;
+    y += campus ? 5 : 2;
   });
   await offer(fileBase(cv) + ".pdf", doc.output("arraybuffer"));
 }
 
 /* ---------- export: Word (.docx built by hand) ---------- */
 const xesc = s => String(s || "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const TW = 11906 - 2 * 680;
-const rPr = ({ b, color, sz = 20 } = {}) => `<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>${b ? "<w:b/>" : ""}${color ? `<w:color w:val="${color}"/>` : ""}<w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/></w:rPr>`;
+const DOCX_T = {
+  campus:  { font: "Times New Roman", sz: 20, margin: 680, name: 30 },
+  classic: { font: "Times New Roman", sz: 21, margin: 720, name: 36, center: true },
+  modern:  { font: "Arial",           sz: 19, margin: 700, name: 40, accent: "1F4FBF", soft: "444444" },
+  compact: { font: "Times New Roman", sz: 19, margin: 540, name: 30, center: true }
+};
+let DX = DOCX_T.campus, TW = 11906 - 2 * DX.margin;
+const rPr = ({ b, i, color, sz = DX.sz } = {}) => `<w:rPr><w:rFonts w:ascii="${DX.font}" w:hAnsi="${DX.font}" w:cs="${DX.font}"/>${b ? "<w:b/>" : ""}${i ? "<w:i/>" : ""}${color ? `<w:color w:val="${color}"/>` : ""}<w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/></w:rPr>`;
 const runs = (text, o = {}) => String(text || "").split(/(\*\*.+?\*\*)/).filter(Boolean).map(p => { const b = /^\*\*.+\*\*$/.test(p); return `<w:r>${rPr({ ...o, b: o.b || b })}<w:t xml:space="preserve">${xesc(b ? p.slice(2, -2) : p)}</w:t></w:r>`; }).join("");
 const tabRun = `<w:r><w:tab/></w:r>`;
-const para = (inner, { shade, align, tabs, before = 0, after = 0, keep } = {}) => `<w:p><w:pPr>${keep ? "<w:keepNext/>" : ""}${tabs ? `<w:tabs>${tabs}</w:tabs>` : ""}${shade ? `<w:shd w:val="clear" w:color="auto" w:fill="${shade}"/>` : ""}<w:spacing w:before="${before}" w:after="${after}" w:line="240" w:lineRule="auto"/>${align ? `<w:jc w:val="${align}"/>` : ""}</w:pPr>${inner}</w:p>`;
+const para = (inner, { shade, align, tabs, before = 0, after = 0, keep, rule, ind } = {}) => `<w:p><w:pPr>${keep ? "<w:keepNext/>" : ""}${rule ? `<w:pBdr><w:bottom w:val="single" w:sz="${rule.sz || 6}" w:space="1" w:color="${rule.color || "000000"}"/></w:pBdr>` : ""}${shade ? `<w:shd w:val="clear" w:color="auto" w:fill="${shade}"/>` : ""}${tabs ? `<w:tabs>${tabs}</w:tabs>` : ""}<w:spacing w:before="${before}" w:after="${after}" w:line="240" w:lineRule="auto"/>${ind ? `<w:ind w:left="${ind.left}" w:hanging="${ind.hanging}"/>` : ""}${align ? `<w:jc w:val="${align}"/>` : ""}</w:pPr>${inner}</w:p>`;
 const borders = on => `<w:tblBorders>${["top","left","bottom","right","insideH","insideV"].map(s => on ? `<w:${s} w:val="single" w:sz="4" w:space="0" w:color="222222"/>` : `<w:${s} w:val="nil"/>`).join("")}</w:tblBorders>`;
 const tbl = (widths, rows, on) => `<w:tbl><w:tblPr><w:tblW w:w="${TW}" w:type="dxa"/><w:tblLayout w:type="fixed"/>${borders(on)}<w:tblCellMar><w:top w:w="10" w:type="dxa"/><w:left w:w="80" w:type="dxa"/><w:bottom w:w="10" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${widths.map(w => `<w:gridCol w:w="${Math.round(w)}"/>`).join("")}</w:tblGrid>${rows}</w:tbl>`;
 const tc = (w, content, { shade, span, vmerge } = {}) => `<w:tc><w:tcPr><w:tcW w:w="${Math.round(w)}" w:type="dxa"/>${span > 1 ? `<w:gridSpan w:val="${span}"/>` : ""}${vmerge ? `<w:vMerge${vmerge === "restart" ? ' w:val="restart"' : ""}/>` : ""}${shade ? `<w:shd w:val="clear" w:color="auto" w:fill="${shade}"/>` : ""}</w:tcPr>${content || para("")}</w:tc>`;
 const tr = cells => `<w:tr><w:trPr><w:cantSplit/></w:trPr>${cells}</w:tr>`;
 async function exportDocx(){
   if (!window.JSZip) { toast("The Word tool didn't load. Check your connection and reload."); return; }
-  const cv = cur(); let body = "";
-  body += para(runs(cv.profile.name, { b: true, sz: 30 }) + tabRun + runs(cv.profile.school, { b: true, sz: 22 }), { tabs: `<w:tab w:val="right" w:pos="${TW}"/>` });
-  body += para(runs(cv.profile.line2, { sz: 22 }), { after: 120 });
+  const cv = cur(), t = tpl(cv), campus = t === "campus";
+  DX = DOCX_T[t]; TW = 11906 - 2 * DX.margin;
+  const right = `<w:tab w:val="right" w:pos="${TW}"/>`;
+  const soft = DX.soft;
+  let body = "";
+  if (campus) {
+    body += para(runs(cv.profile.name, { b: true, sz: 30 }) + tabRun + runs(cv.profile.school, { b: true, sz: 22 }), { tabs: right });
+    body += para(runs(cv.profile.line2, { sz: 22 }), { after: 120 });
+  } else {
+    const align = DX.center ? "center" : undefined;
+    body += para(runs(cv.profile.name, { b: true, sz: DX.name }), { align, after: 40 });
+    if ((cv.profile.contact || "").trim()) body += para(runs(cv.profile.contact, { color: soft, sz: DX.sz - 1 }), { align, after: 80 });
+  }
   cv.sections.forEach(s => {
-    body += para(runs(String(s.title).toUpperCase(), { b: true, color: "FFFFFF", sz: 21 }), { shade: "5B5B5B", before: 100, keep: true });
+    if (campus) body += para(runs(String(s.title).toUpperCase(), { b: true, color: "FFFFFF", sz: 21 }), { shade: "5B5B5B", before: 100, keep: true });
+    else body += para(runs(String(s.title).toUpperCase(), { b: true, color: DX.accent, sz: DX.sz + 2 }), { rule: { color: DX.accent || "000000", sz: DX.accent ? 8 : 6 }, before: t === "compact" ? 120 : 180, after: 60, keep: true });
     if (s.type === "table") {
-      const lens = s.columns.map((c, ci) => Math.min(40, Math.max(c.length + 2, ...s.rows.map(r => stripMd(r.cells[ci] || "").length))));
-      const tot = lens.reduce((a, b) => a + b, 0); const widths = lens.map(l => TW * l / tot);
-      let rows = tr(s.columns.map((c, ci) => tc(widths[ci], para(runs(c)), { shade: "D6D6D6" })).join(""));
-      s.rows.forEach(r => { rows += tr(r.cells.map((c, ci) => tc(widths[ci], para(runs(c)))).join("")); });
-      body += tbl(widths, rows, true);
+      const em = campus ? null : eduMap(s);
+      if (em) {
+        s.rows.forEach(r => {
+          body += para(runs(stripMd(r.cells[em.inst] || ""), { b: true }) + (em.year >= 0 ? tabRun + runs(stripMd(r.cells[em.year] || ""), { b: true }) : ""), { tabs: right, keep: true });
+          const l2 = eduLine2(s, r, em); if (l2) body += para(runs(l2, { i: true, color: soft }), { after: 40 });
+        });
+      } else {
+        const lens = s.columns.map((c, ci) => Math.min(40, Math.max(c.length + 2, ...s.rows.map(r => stripMd(r.cells[ci] || "").length))));
+        const tot = lens.reduce((a, b) => a + b, 0); const widths = lens.map(l => TW * l / tot);
+        let rows = tr(s.columns.map((c, ci) => tc(widths[ci], para(runs(c)), { shade: "D6D6D6" })).join(""));
+        s.rows.forEach(r => { rows += tr(r.cells.map((c, ci) => tc(widths[ci], para(runs(c)))).join("")); });
+        body += tbl(widths, rows, true);
+      }
     } else {
       s.groups.forEach(g => {
-        const hasLab = g.points.some(p => p.label?.trim()), hasYr = g.points.some(p => p.year?.trim());
-        const labW = hasLab ? 1750 : 0, bW = 260, yW = hasYr ? 700 : 0, tW = TW - labW - bW - yW;
-        const widths = [labW, bW, tW, yW].filter(Boolean); const n = widths.length;
-        let rows = "";
-        if (g.showHead) rows += tr(tc(TW, para(runs(g.org, { b: true }) + (g.role ? runs((g.org ? "  |  " : "") + g.role) : "") + tabRun + runs(g.dates), { tabs: `<w:tab w:val="right" w:pos="${TW - 170}"/>` }), { span: n, shade: "ECECEC" }));
-        const pts = g.points.filter(p => p.text.trim()); let prev = null;
-        pts.forEach(p => {
-          const start = (p.label || "") !== prev; prev = p.label || "";
-          let cells = "";
-          if (hasLab) cells += tc(labW, start ? para(runs(p.label)) : para(""), { vmerge: start ? "restart" : "continue" });
-          cells += tc(bW, para(runs("▪", { sz: 16 }), { align: "center" }));
-          cells += tc(tW, para(runs(p.text)));
-          if (hasYr) cells += tc(yW, para(runs(p.year), { align: "right" }));
-          rows += tr(cells);
-        });
-        if (rows) body += tbl(widths, rows, false);
+        const pts = g.points.filter(p => p.text.trim());
+        const hasLab = pts.some(p => p.label?.trim()), hasYr = pts.some(p => p.year?.trim());
+        if (campus) {
+          const labW = hasLab ? 1750 : 0, bW = 260, yW = hasYr ? 700 : 0, tW = TW - labW - bW - yW;
+          const widths = [labW, bW, tW, yW].filter(Boolean); const n = widths.length;
+          let rows = "";
+          if (g.showHead) rows += tr(tc(TW, para(runs(g.org, { b: true }) + (g.role ? runs((g.org ? "  |  " : "") + g.role) : "") + tabRun + runs(g.dates), { tabs: `<w:tab w:val="right" w:pos="${TW - 170}"/>` }), { span: n, shade: "ECECEC" }));
+          let prev = null;
+          pts.forEach(p => {
+            const start = (p.label || "") !== prev; prev = p.label || "";
+            let cells = "";
+            if (hasLab) cells += tc(labW, start ? para(runs(p.label)) : para(""), { vmerge: start ? "restart" : "continue" });
+            cells += tc(bW, para(runs("▪", { sz: 16 }), { align: "center" }));
+            cells += tc(tW, para(runs(p.text)));
+            if (hasYr) cells += tc(yW, para(runs(p.year), { align: "right" }));
+            rows += tr(cells);
+          });
+          if (rows) body += tbl(widths, rows, false);
+        } else {
+          if (g.showHead) {
+            body += para(runs(g.org, { b: true }) + tabRun + runs(g.dates, { b: true }), { tabs: right, keep: true, before: 60 });
+            if ((g.role || g.location || "").trim()) body += para(runs(g.role, { i: true, color: soft }) + tabRun + runs(g.location, { i: true, color: soft }), { tabs: right, keep: true });
+          }
+          let prev = null;
+          pts.forEach(p => {
+            const start = (p.label || "") !== prev; prev = p.label || "";
+            if (start && p.label?.trim()) body += para(runs(p.label, { b: true, i: true }), { keep: true, before: 30 });
+            body += para(runs("•") + tabRun + runs(p.text) + (hasYr && p.year ? tabRun + runs(p.year) : ""), { ind: { left: 300, hanging: 220 }, tabs: `<w:tab w:val="left" w:pos="300"/>${hasYr ? right : ""}` });
+          });
+        }
       });
     }
   });
   body += para("");
-  const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="680" w:right="680" w:bottom="680" w:left="680" w:header="0" w:footer="0" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="${DX.margin}" w:right="${DX.margin}" w:bottom="${DX.margin}" w:left="${DX.margin}" w:header="0" w:footer="0" w:gutter="0"/></w:sectPr></w:body></w:document>`;
   const zip = new JSZip();
   zip.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`);
   zip.file("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);

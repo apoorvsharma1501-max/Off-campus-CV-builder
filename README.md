@@ -5,6 +5,7 @@ A CV builder for off-campus MBA placements, laid out like a campus placement por
 - Sections ("buckets") and bullets you can add, edit, delete and reorder
 - Several CVs, one per job description, copied from a master CV
 - ATS keyword match: paste a JD and see which keywords your CV covers and which are missing
+- Four templates (Campus, Classic, Modern, Compact) that also apply to PDF and Word export
 - One-page check, bullet quality checks, and undo
 - Export to PDF (selectable text) and Word (.docx)
 - Create an account with a BITSoM email and a password; CVs are saved to your account and sync across devices
